@@ -50,7 +50,11 @@ export default function UnidadesAcademicas() {
       }
       setShowModal(false);
       setEditing(null);
+<<<<<<< HEAD
       setFormData({ nombre: '', sigla: '', descripcion: '' });
+=======
+      setFormData({ codigo: '', nombre: '', sigla: '', descripcion: '' });
+>>>>>>> e248274726075556f82a2df4418481677aeeb79f
       loadUnidades();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar');
@@ -59,7 +63,11 @@ export default function UnidadesAcademicas() {
 
   const handleEdit = (unidad) => {
     setEditing(unidad.id);
+<<<<<<< HEAD
     setFormData({ nombre: unidad.nombre, sigla: unidad.sigla, descripcion: unidad.descripcion });
+=======
+    setFormData({ codigo: unidad.codigo, nombre: unidad.nombre, sigla: unidad.sigla, descripcion: unidad.descripcion });
+>>>>>>> e248274726075556f82a2df4418481677aeeb79f
     setShowModal(true);
   };
 
@@ -97,7 +105,11 @@ export default function UnidadesAcademicas() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Unidades Académicas</h1>
           <p className="text-gray-500 dark:text-gray-400">Gestión de facultades, escuelas e institutos</p>
         </div>
+<<<<<<< HEAD
         <button onClick={() => { setEditing(null); setFormData({ nombre: '', sigla: '', descripcion: '' }); setShowModal(true); }} className="btn btn-primary flex items-center gap-2">
+=======
+        <button onClick={() => { setEditing(null); setFormData({ codigo: '', nombre: '', sigla: '', descripcion: '' }); setShowModal(true); }} className="btn btn-primary flex items-center gap-2">
+>>>>>>> e248274726075556f82a2df4418481677aeeb79f
           <Plus size={20} /> Nueva Unidad
         </button>
       </div>

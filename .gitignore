@@ -6,13 +6,21 @@ __pycache__/
 *.sqlite3
 node_modules/
 dist/
+<<<<<<< HEAD
+=======
+.env.local
+>>>>>>> e248274726075556f82a2df4418481677aeeb79f
 
 # Docker
 postgres_data/
 static_volume/
+<<<<<<< HEAD
 media_volume/
 
 # OS
 .DS_Store
 Thumbs.db
 *Zone.Identifier*
+=======
+media_volume/
+>>>>>>> e248274726075556f82a2df4418481677aeeb79f

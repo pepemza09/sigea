@@ -216,7 +216,11 @@ setFormData({ codigo: '', nombre: '', unidad_academica: '', duracion_anios: 4 })
                 <input
                   type="text"
                   value={formData.nombre}
+<<<<<<< HEAD
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value.toUpperCase() })}
+=======
+                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+>>>>>>> e248274726075556f82a2df4418481677aeeb79f
                   className="input"
                   required
                 />
