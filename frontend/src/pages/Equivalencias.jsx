@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit, Save, X, ArrowRight } from 'lucide-react';
 import { equivalenciasService, planesService } from '../services/api';
 import toast from 'react-hot-toast';
+import { ConfirmModal, AlertModal } from '../components/Modal';
 
 export default function Equivalencias() {
   const [equivalencias, setEquivalencias] = useState([]);
@@ -16,6 +17,12 @@ export default function Equivalencias() {
   const [newEq, setNewEq] = useState({ plan_origen: '', plan_destino: '' });
   const [editingDetalle, setEditingDetalle] = useState(null);
   const [editDetalleData, setEditDetalleData] = useState({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteDetalleModal, setShowDeleteDetalleModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteDetalleId, setDeleteDetalleId] = useState(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     loadData();
@@ -55,15 +62,22 @@ export default function Equivalencias() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('¿Está seguro de eliminar esta equivalencia?')) return;
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await equivalenciasService.delete(id);
+      await equivalenciasService.delete(deleteId);
       toast.success('Equivalencia eliminada');
       loadData();
+      setShowDeleteModal(false);
+      setDeleteId(null);
     } catch (error) {
-      const msg = error.response?.data?.detail || 'Error al eliminar';
-      toast.error(msg);
+      setErrorMessage(error.response?.data?.detail || 'Error al eliminar');
+      setShowDeleteModal(false);
+      setShowErrorModal(true);
     }
   };
 
@@ -106,16 +120,23 @@ export default function Equivalencias() {
     }
   };
 
-  const handleDeleteDetalle = async (detalleId) => {
-    if (!confirm('¿Está seguro de eliminar este detalle?')) return;
+  const handleDeleteDetalle = (detalleId) => {
+    setDeleteDetalleId(detalleId);
+    setShowDeleteDetalleModal(true);
+  };
+
+  const confirmDeleteDetalle = async () => {
     try {
-      await equivalenciasService.eliminarDetalle(selectedEq.id, detalleId);
+      await equivalenciasService.eliminarDetalle(selectedEq.id, deleteDetalleId);
       toast.success('Detalle eliminado');
       loadData();
       handleVerComparativa(selectedEq);
+      setShowDeleteDetalleModal(false);
+      setDeleteDetalleId(null);
     } catch (error) {
-      const msg = error.response?.data?.detail || error.message || 'Error al eliminar';
-      toast.error(msg);
+      setErrorMessage(error.response?.data?.detail || 'Error al eliminar');
+      setShowDeleteDetalleModal(false);
+      setShowErrorModal(true);
     }
   };
 
@@ -205,9 +226,13 @@ export default function Equivalencias() {
       </div>
 
       {showCreateModal && (
-        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-          <div className="modal p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">Nueva Equivalencia</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setShowCreateModal(false)} />
+          <div className="relative z-10 w-full max-w-4xl rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Nueva Equivalencia</h2>
+              <button onClick={() => setShowCreateModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl">✕</button>
+            </div>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Plan Origen</label>
@@ -247,164 +272,184 @@ export default function Equivalencias() {
       )}
 
       {showCompareModal && comparativa && (
-        <div className="modal-overlay" onClick={() => setShowCompareModal(false)}>
-          <div className="fixed inset-4 md:inset-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-auto flex flex-col" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-xl font-bold">Detalle de Equivalencia</h2>
-              <button onClick={() => setShowCompareModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setShowCompareModal(false)} />
+          <div className="relative z-10 bg-white rounded-lg shadow-xl w-full max-w-5xl flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Detalle de Equivalencia</h2>
+                <p className="text-sm text-gray-500">{selectedEq?.plan_origen_nombre} → {selectedEq?.plan_destino_nombre}</p>
+              </div>
+              <button onClick={() => setShowCompareModal(false)} className="p-2 hover:bg-gray-100 rounded-lg">
                 <X size={20} />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 p-4">
-              <div className="card p-3 bg-gray-50 dark:bg-gray-700/50">
-                <p className="text-sm text-gray-500">Plan Origen</p>
-                <p className="font-medium">{selectedEq?.plan_origen_nombre}</p>
-              </div>
-              <div className="card p-3 bg-gray-50 dark:bg-gray-700/50">
-                <p className="text-sm text-gray-500">Plan Destino</p>
-                <p className="font-medium">{selectedEq?.plan_destino_nombre}</p>
-              </div>
-            </div>
-
-            <div className="mb-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <p className="text-sm font-medium mb-2">Agregar Nueva Equivalencia</p>
-              <div className="grid grid-cols-3 gap-2">
-                <select
-                  value={editDetalleData.materia_origen || ''}
-                  onChange={(e) => setEditDetalleData({ ...editDetalleData, materia_origen: parseInt(e.target.value) })}
-                  className="input text-sm"
-                >
-                  <option value="">Materia Origen</option>
-                  {comparativa.plan_origen.map(m => (
-                    <option key={m.id} value={m.id}>{m.materia_codigo} - {m.materia_nombre}</option>
-                  ))}
-                </select>
-                <div className="flex items-center justify-center">
-                  <ArrowRight size={20} className="text-gray-400" />
+            <div className="p-4 border-b border-gray-200">
+              <p className="text-sm font-medium mb-3">Nueva Equivalencia</p>
+              <form onSubmit={(e) => { e.preventDefault(); handleAddDetalle(); }} className="grid grid-cols-3 gap-4 items-end">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Materia Origen</label>
+                  <select
+                    value={editDetalleData.materia_origen || ''}
+                    onChange={(e) => setEditDetalleData({ ...editDetalleData, materia_origen: parseInt(e.target.value) })}
+                    className="input"
+                    required
+                  >
+                    <option value="">Seleccionar materia</option>
+                    {comparativa.plan_origen.filter(m => !selectedEq?.detalles?.some(d => d.materia_origen === m.id)).map(m => (
+                      <option key={m.id} value={m.id}>{m.materia_codigo} - {m.materia_nombre}</option>
+                    ))}
+                  </select>
                 </div>
-                <select
-                  value={editDetalleData.materia_destino || ''}
-                  onChange={(e) => setEditDetalleData({ ...editDetalleData, materia_destino: parseInt(e.target.value) })}
-                  className="input text-sm"
-                >
-                  <option value="">Materia Destino</option>
-                  {comparativa.plan_destino.map(m => (
-                    <option key={m.id} value={m.id}>{m.materia_codigo} - {m.materia_nombre}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <select
-                  value={editDetalleData.tipo || ''}
-                  onChange={(e) => setEditDetalleData({ ...editDetalleData, tipo: e.target.value })}
-                  className="input text-sm flex-1"
-                >
-                  <option value="">Tipo</option>
-                  <option value="1:1">Uno a uno</option>
-                  <option value="1:N">Una origen a varias destino</option>
-                  <option value="N:1">Varias origen a una destino</option>
-                </select>
-                <button onClick={handleAddDetalle} className="btn btn-primary text-sm px-3">
-                  <Plus size={16} /> Agregar
-                </button>
-              </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Tipo de Equivalencia</label>
+                  <select
+                    value={editDetalleData.tipo || ''}
+                    onChange={(e) => setEditDetalleData({ ...editDetalleData, tipo: e.target.value })}
+                    className="input"
+                    required
+                  >
+                    <option value="">Seleccionar tipo</option>
+                    <option value="1:1">Uno a uno (1:1)</option>
+                    <option value="1:N">Una a varias (1:N)</option>
+                    <option value="N:1">Varias a una (N:1)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Materia Destino</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={editDetalleData.materia_destino || ''}
+                      onChange={(e) => setEditDetalleData({ ...editDetalleData, materia_destino: parseInt(e.target.value) })}
+                      className="input flex-1"
+                      required
+                    >
+                      <option value="">Seleccionar materia</option>
+                      {comparativa.plan_destino.map(m => (
+                        <option key={m.id} value={m.id}>{m.materia_codigo} - {m.materia_nombre}</option>
+                      ))}
+                    </select>
+                    <button type="submit" className="btn btn-primary">
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
 
-            <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
-              <table className="table text-sm">
-                <thead>
-                  <tr>
-                    <th>Materia Origen</th>
-                    <th>Tipo</th>
-                    <th>Materia Destino</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparativa.plan_origen.map((mpOrigen) => {
-                    const detalle = selectedEq?.detalles?.find(d => d.materia_origen === mpOrigen.id);
-                    const mpDestino = comparativa.plan_destino.find(md => 
-                      detalle?.materia_destino === md.id
-                    );
+            <div className="flex-1 overflow-y-auto p-4">
+              <p className="text-sm font-medium mb-3">Equivalencias Configuradas ({selectedEq?.detalles?.length || 0})</p>
+              {selectedEq?.detalles?.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedEq.detalles.map((detalle) => {
+                    const mpOrigen = comparativa.plan_origen.find(m => m.id === detalle.materia_origen);
+                    const mpDestino = comparativa.plan_destino.find(m => m.id === detalle.materia_destino);
                     
                     return (
-                      <tr key={mpOrigen.id}>
-                        <td>
+                      <div key={detalle.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs">{mpOrigen.materia_codigo}</span>
-                            <span>{mpOrigen.materia_nombre}</span>
+                            <span className="font-mono text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded">{mpOrigen?.materia_codigo}</span>
+                            <span className="text-sm">{mpOrigen?.materia_nombre}</span>
                           </div>
-                        </td>
-                        <td>
-                          {detalle ? (
-                            editingDetalle === detalle.id ? (
-                              <select
-                                value={editDetalleData.tipo || detalle.tipo}
-                                onChange={(e) => setEditDetalleData({ ...editDetalleData, tipo: e.target.value })}
-                                className="input text-xs w-32"
+                        </div>
+                        <div className="px-3">
+                          {editingDetalle === detalle.id ? (
+                            <select
+                              value={editDetalleData.tipo || detalle.tipo}
+                              onChange={(e) => setEditDetalleData({ ...editDetalleData, tipo: e.target.value })}
+                              className="input text-sm w-32"
+                            >
+                              <option value="1:1">Uno a uno</option>
+                              <option value="1:N">Una origen a varias</option>
+                              <option value="N:1">Varias origen a una</option>
+                            </select>
+                          ) : (
+                            <span className="badge badge-primary">{detalle.tipo}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-400">
+                          <ArrowRight size={16} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs bg-success-100 text-success-700 px-2 py-0.5 rounded">{mpDestino?.materia_codigo}</span>
+                            <span className="text-sm">{mpDestino?.materia_nombre}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {editingDetalle === detalle.id ? (
+                            <>
+                              <button onClick={handleSaveDetalle} className="p-1 text-success-500 hover:bg-gray-200 rounded" title="Guardar">
+                                <Save size={18} />
+                              </button>
+                              <button onClick={() => { setEditingDetalle(null); setEditDetalleData({}); }} className="p-1 text-gray-500 hover:bg-gray-200 rounded" title="Cancelar">
+                                <X size={18} />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button 
+                                onClick={() => { setEditingDetalle(detalle.id); setEditDetalleData(detalle); }} 
+                                className="p-1 text-gray-500 hover:bg-gray-200 rounded"
+                                title="Editar"
                               >
-                                <option value="1:1">Uno a uno</option>
-                                <option value="1:N">Una origen a varias</option>
-                                <option value="N:1">Varias origen a una</option>
-                              </select>
-                            ) : (
-                              <span className="badge badge-primary">{detalle.tipo}</span>
-                            )
-                          ) : (
-                            <span className="text-gray-400">-</span>
+                                <Edit size={18} />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteDetalle(detalle.id)} 
+                                className="p-1 text-danger-500 hover:bg-gray-200 rounded"
+                                title="Eliminar"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </>
                           )}
-                        </td>
-                        <td>
-                          {mpDestino ? (
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs">{mpDestino.materia_codigo}</span>
-                              <span>{mpDestino.materia_nombre}</span>
-                            </div>
-                          ) : (
-                            <span className="text-gray-400">-</span>
-                          )}
-                        </td>
-                        <td>
-                          {detalle ? (
-                            editingDetalle === detalle.id ? (
-                              <div className="flex items-center gap-1">
-                                <button onClick={handleSaveDetalle} className="p-1 text-success-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                                  <Save size={16} />
-                                </button>
-                                <button onClick={() => { setEditingDetalle(null); setEditDetalleData({}); }} className="p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                                  <X size={16} />
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1">
-                                <button 
-                                  onClick={() => { setEditingDetalle(detalle.id); setEditDetalleData(detalle); }} 
-                                  className="p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                                >
-                                  <Edit size={16} />
-                                </button>
-                                <button 
-                                  onClick={() => handleDeleteDetalle(detalle.id)} 
-                                  className="p-1 text-danger-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            )
-                          ) : (
-                            <span className="text-gray-400 text-xs">Sin equivalencia</span>
-                          )}
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No hay equivalencias configuradas</p>
+                  <p className="text-sm">Agregue una equivalencia usando el formulario acima</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Confirmar eliminación"
+        message="¿Está seguro de eliminar esta equivalencia?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
+
+      <ConfirmModal
+        open={showDeleteDetalleModal}
+        onClose={() => setShowDeleteDetalleModal(false)}
+        onConfirm={confirmDeleteDetalle}
+        title="Confirmar eliminación"
+        message="¿Está seguro de eliminar este detalle de equivalencia?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
+
+      <AlertModal
+        open={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="¡Error!"
+        message={errorMessage}
+        buttonText="Entendido"
+        type="danger"
+      />
     </div>
   );
 }

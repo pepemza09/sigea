@@ -20,6 +20,6 @@ class UnidadAcademica(models.Model):
     def delete(self, *args, **kwargs):
         if self.carreras.exists():
             raise ValidationError(
-                f"No se puede eliminar la Unidad Académica '{self.nombre}' porque tiene Carreras asociadas."
+                f"No se puede eliminar la unidad académica '{self.nombre}' porque tiene carreras associadas."
             )
         super().delete(*args, **kwargs)

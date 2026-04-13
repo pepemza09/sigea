@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, Eye, Copy } from 'lucide-react';
 import { planesService, carrerasService } from '../services/api';
 import toast from 'react-hot-toast';
+import { ConfirmModal, AlertModal } from '../components/Modal';
 
 export default function Planes() {
   const [planes, setPlanes] = useState([]);
@@ -14,6 +15,10 @@ export default function Planes() {
   const [editing, setEditing] = useState(null);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [cloneData, setCloneData] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
     anio_aprobacion: new Date().getFullYear(),
@@ -93,14 +98,22 @@ export default function Planes() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('¿Está seguro de eliminar este plan?')) return;
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await planesService.delete(id);
+      await planesService.delete(deleteId);
       toast.success('Plan eliminado');
       loadData();
+      setShowDeleteModal(false);
+      setDeleteId(null);
     } catch (error) {
-      toast.error(error.response?.data?.error || 'No se puede eliminar: tiene materias asociadas');
+      setErrorMessage(error.response?.data?.error || 'No se puede eliminar: tiene materias asociadas');
+      setShowDeleteModal(false);
+      setShowErrorModal(true);
     }
   };
 
@@ -227,9 +240,13 @@ export default function Planes() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">{editing ? 'Editar' : 'Nuevo'} Plan de Estudio</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setShowModal(false)} />
+          <div className="relative z-10 w-full max-w-4xl rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{editing ? 'Editar' : 'Nuevo'} Plan de Estudio</h2>
+              <button onClick={() => setShowModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl">✕</button>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Nombre</label>
@@ -321,9 +338,13 @@ export default function Planes() {
       )}
 
       {showCloneModal && (
-        <div className="modal-overlay" onClick={() => setShowCloneModal(false)}>
-          <div className="modal p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">Clonar Plan de Estudio</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setShowCloneModal(false)} />
+          <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Clonar Plan de Estudio</h2>
+              <button onClick={() => setShowCloneModal(false)} className="p-1 hover:bg-gray-100 rounded text-gray-500 text-xl">✕</button>
+            </div>
             <form onSubmit={handleClone} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Nombre de la Copia</label>
@@ -343,6 +364,25 @@ export default function Planes() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Confirmar eliminación"
+        message="¿Está seguro de eliminar este plan de estudio?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
+
+      <AlertModal
+        open={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="¡Error!"
+        message={errorMessage}
+        buttonText="Entendido"
+        type="danger"
+      />
     </div>
   );
 }

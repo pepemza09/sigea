@@ -36,7 +36,7 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed }) {
         {isOpen ? <X size={18} /> : null}
       </button>
 
-      <div className={`sidebar ${theme === 'dark' ? 'sidebar-dark' : 'sidebar-light'} ${sidebarWidth} ${isOpen ? 'translate-x-0' : ''} transition-all duration-300`}>
+      <div className={`sidebar ${theme === 'dark' ? 'sidebar-dark' : 'sidebar-light'} ${sidebarWidth} ${isOpen ? 'sidebar-visible' : 'sidebar-hidden'} transition-all duration-300`}>
         <div className="flex flex-col h-full">
           <div className="p-3 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center">
             <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>

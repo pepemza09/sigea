@@ -1,17 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, X } from 'lucide-react';
-import { materiasService } from '../services/api';
+import { Plus, Search, Edit, Trash2, BookOpen, X } from 'lucide-react';
+import { materiasService, planesService } from '../services/api';
 import toast from 'react-hot-toast';
+import { ConfirmModal, AlertModal } from '../components/Modal';
 
 export default function Materias() {
   const [materias, setMaterias] = useState([]);
+  const [planes, setPlanes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showPlansModal, setShowPlansModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [materiaToDelete, setMateriaToDelete] = useState(null);
+  const [materiaForPlans, setMateriaForPlans] = useState(null);
+  const [associatedPlans, setAssociatedPlans] = useState([]);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({
     codigo: '',
@@ -42,6 +47,49 @@ export default function Materias() {
       toast.error('Error al cargar materias');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPlanes = async () => {
+    try {
+      const res = await planesService.getAll();
+      setPlanes(res.data.results || res.data);
+    } catch (error) {
+      toast.error('Error al cargar planes');
+    }
+  };
+
+  const handleShowPlans = async (materia) => {
+    setMateriaForPlans(materia);
+    await loadPlanes();
+    setShowPlansModal(true);
+    try {
+      const res = await materiasService.getById(materia.id);
+      setAssociatedPlans(res.data.planes || []);
+    } catch (err) {
+      setAssociatedPlans(materia.planes || []);
+    }
+  };
+
+  const handleAssociatePlan = async (planId) => {
+    const planIdNum = Number(planId);
+    try {
+      await materiasService.associatePlan(materiaForPlans.id, planIdNum);
+      toast.success('Materia asociada al plan');
+      await handleShowPlans(materiaForPlans);
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al asociar');
+    }
+  };
+
+  const handleRemovePlan = async (materiaPlanId, planId) => {
+    const planIdNum = Number(planId);
+    try {
+      await materiasService.dissociatePlan(materiaForPlans.id, planIdNum);
+      toast.success('Materia desasociada del plan');
+      await handleShowPlans(materiaForPlans);
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al desasociar');
     }
   };
 
@@ -170,13 +218,18 @@ export default function Materias() {
                     <td>{materia.creditos}</td>
                     <td>
                       {materia.planes_count > 0 ? (
-                        <span className="badge badge-primary">{materia.planes_count} planes</span>
+                        <button onClick={() => handleShowPlans(materia)} className="badge badge-primary hover:bg-primary-600 cursor-pointer">
+                          {materia.planes_count} planes
+                        </button>
                       ) : (
                         <span className="text-gray-400">-</span>
                       )}
                     </td>
                     <td>
                       <div className="flex items-center gap-2">
+                        <button onClick={() => handleShowPlans(materia)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg" title="Ver planes">
+                          <BookOpen size={18} className="text-primary-500" />
+                        </button>
                         <button onClick={() => handleEdit(materia)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                           <Edit size={18} className="text-gray-500" />
                         </button>
@@ -198,9 +251,13 @@ export default function Materias() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">{editing ? 'Editar' : 'Nueva'} Materia</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setShowModal(false)} />
+          <div className="relative z-10 w-full max-w-4xl rounded-lg bg-white p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">{editing ? 'Editar' : 'Nueva'} Materia</h2>
+              <button onClick={() => setShowModal(false)} className="p-1 hover:bg-gray-100 rounded text-gray-500 text-xl">✕</button>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Código</label>
@@ -287,35 +344,87 @@ export default function Materias() {
         </div>
       )}
 
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowDeleteModal(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Confirmar eliminación</h3>
-              <button onClick={() => setShowDeleteModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">¿Está seguro de eliminar esta materia?</p>
-            <div className="flex gap-3">
-              <button onClick={() => setShowDeleteModal(false)} className="flex-1 btn btn-secondary">Cancelar</button>
-              <button onClick={confirmDelete} className="flex-1 btn btn-danger">Eliminar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Confirmar eliminación"
+        message="¿Está seguro de eliminar esta materia?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
 
-      {showErrorModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowErrorModal(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
+      <AlertModal
+        open={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="¡Error!"
+        message={errorMessage}
+        buttonText="Entendido"
+        type="danger"
+      />
+
+      {showPlansModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => { setShowPlansModal(false); loadMaterias(); }} />
+          <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-danger-500">Error</h3>
-              <button onClick={() => setShowErrorModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                <X size={20} className="text-gray-500" />
-              </button>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Planes de Estudio</h2>
+                <p className="text-sm text-gray-500">{materiaForPlans?.codigo} - {materiaForPlans?.nombre}</p>
+              </div>
+              <button onClick={() => setShowPlansModal(false)} className="p-1 hover:bg-gray-100 rounded text-gray-500 text-xl">✕</button>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">{errorMessage}</p>
-            <button onClick={() => setShowErrorModal(false)} className="w-full btn btn-primary">Aceptar</button>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Asociar a Plan</label>
+              <div className="flex gap-2">
+                <select
+                  id="planSelect"
+                  className="input flex-1"
+                  defaultValue=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAssociatePlan(parseInt(e.target.value));
+                      e.target.value = '';
+                    }
+                  }}
+                >
+                  <option value="">Seleccionar plan...</option>
+                  {planes.filter(p => !associatedPlans.some(ap => Number(ap.plan_de_estudio) === Number(p.id))).map(p => (
+                    <option key={p.id} value={p.id}>{p.nombre}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium mb-2">Planes Asociados ({associatedPlans.length})</p>
+              {associatedPlans.length > 0 ? (
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                  {associatedPlans.map(plan => (
+                    <div key={plan.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <BookOpen size={16} className="text-primary-500" />
+                        <span className="text-sm">{plan.plan_nombre}</span>
+                      </div>
+                      <button
+                        onClick={() => handleRemovePlan(plan.id, plan.plan_de_estudio)}
+                        className="p-1 hover:bg-gray-200 rounded text-danger-500"
+                        title="Desasociar"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-4">Esta materia no está asociada a ningún plan</p>
+              )}
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button onClick={() => { setShowPlansModal(false); loadMaterias(); }} className="btn btn-primary">Cerrar</button>
+            </div>
           </div>
         </div>
       )}

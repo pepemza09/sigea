@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Save, GripVertical } from 'lucide-react';
-import { planesService, equivalenciasService } from '../services/api';
+import { ArrowLeft, Edit, Save, Plus } from 'lucide-react';
+import { planesService, equivalenciasService, materiasService } from '../services/api';
 import toast from 'react-hot-toast';
+import Modal from '../components/Modal';
 
 export default function Malla() {
   const { id } = useParams();
@@ -10,6 +11,9 @@ export default function Malla() {
   const [malla, setMalla] = useState(null);
   const [editingMateria, setEditingMateria] = useState(null);
   const [editData, setEditData] = useState({});
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [allMaterias, setAllMaterias] = useState([]);
+  const [newMateria, setNewMateria] = useState({ materia: '', anio_cursado: 1, cuatrimestre: 1, area_disciplinar: 'Derecho', formato: 'Teórico aplicado', es_optativa: false, es_electiva: false });
 
   useEffect(() => {
     loadMalla();
@@ -34,6 +38,33 @@ export default function Malla() {
       loadMalla();
     } catch (error) {
       toast.error('Error al actualizar');
+    }
+  };
+
+  const loadAllMaterias = async () => {
+    try {
+      const res = await materiasService.getAll();
+      setAllMaterias(res.data.results || res.data);
+    } catch (error) {
+      toast.error('Error al cargar materias');
+    }
+  };
+
+  const handleOpenAddModal = async () => {
+    await loadAllMaterias();
+    setShowAddModal(true);
+  };
+
+  const handleAddMateria = async (e) => {
+    e.preventDefault();
+    try {
+      await planesService.addMateria(id, newMateria);
+      toast.success('Materia agregada al plan');
+      setShowAddModal(false);
+      setNewMateria({ materia: '', anio_cursado: 1, cuatrimestre: 1, area_disciplinar: 'Derecho', formato: 'Teórico aplicado', es_optativa: false, es_electiva: false });
+      loadMalla();
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Error al agregar materia');
     }
   };
 
@@ -91,14 +122,19 @@ export default function Malla() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link to="/planes" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-          <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.nombre}</h1>
-          <p className="text-gray-500 dark:text-gray-400">{plan.carrera_nombre} • {plan.anio_aprobacion}</p>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link to="/planes" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+            <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.nombre}</h1>
+            <p className="text-gray-500 dark:text-gray-400">{plan.carrera_nombre} • {plan.anio_aprobacion}</p>
+          </div>
         </div>
+        <button onClick={handleOpenAddModal} className="btn btn-primary flex items-center gap-2">
+          <Plus size={20} /> Agregar Materia
+        </button>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -192,9 +228,13 @@ export default function Malla() {
       </div>
 
       {editingMateria && (
-        <div className="modal-overlay" onClick={() => setEditingMateria(null)}>
-          <div className="modal p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">Editar Materia del Plan</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setEditingMateria(null)} />
+          <div className="relative z-10 w-full max-w-4xl rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Editar Materia del Plan</h2>
+              <button onClick={() => setEditingMateria(null)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl">✕</button>
+            </div>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Código</label>
@@ -286,6 +326,107 @@ export default function Malla() {
           </div>
         </div>
       )}
+
+      <Modal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title="Agregar Materia al Plan"
+        onSave={handleAddMateria}
+        saveText="Agregar"
+        onCancel={() => setShowAddModal(false)}
+        cancelText="Cancelar"
+      >
+        <form onSubmit={handleAddMateria} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Materia</label>
+            <select
+              value={newMateria.materia}
+              onChange={(e) => setNewMateria({ ...newMateria, materia: parseInt(e.target.value) })}
+              className="input"
+              required
+            >
+              <option value="">Seleccionar materia</option>
+              {allMaterias.map(m => (
+                <option key={m.id} value={m.id}>{m.codigo} - {m.nombre}</option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Año</label>
+              <select
+                value={newMateria.anio_cursado}
+                onChange={(e) => setNewMateria({ ...newMateria, anio_cursado: parseInt(e.target.value) })}
+                className="input"
+              >
+                {Array.from({ length: maxAnios }, (_, i) => i + 1).map(a => (
+                  <option key={a} value={a}>{a}° Año</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Cuatrimestre</label>
+              <select
+                value={newMateria.cuatrimestre}
+                onChange={(e) => setNewMateria({ ...newMateria, cuatrimestre: parseInt(e.target.value) })}
+                className="input"
+              >
+                <option value={1}>1° Cuatrimestre</option>
+                <option value={2}>2° Cuatrimestre</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Área Disciplinar</label>
+            <select
+              value={newMateria.area_disciplinar}
+              onChange={(e) => setNewMateria({ ...newMateria, area_disciplinar: e.target.value })}
+              className="input"
+            >
+              <option value="Matemáticas">Matemáticas</option>
+              <option value="Derecho">Derecho</option>
+              <option value="Gestión y Estrategia">Gestión y Estrategia</option>
+              <option value="Finanzas y Economía">Finanzas y Economía</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Administración de Personas">Administración de Personas</option>
+              <option value="Administración de Operaciones y Tecnología">Administración de Operaciones y Tecnología</option>
+              <option value="Profesional">Profesional</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Formato</label>
+            <select
+              value={newMateria.formato}
+              onChange={(e) => setNewMateria({ ...newMateria, formato: e.target.value })}
+              className="input"
+            >
+              <option value="Teórico aplicado">Teórico aplicado</option>
+              <option value="Taller">Taller</option>
+              <option value="Aplicación práctica de la Teoría">Aplicación práctica de la Teoría</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={newMateria.es_optativa}
+                onChange={(e) => setNewMateria({ ...newMateria, es_optativa: e.target.checked })}
+                className="w-4 h-4"
+              />
+              <span className="text-sm font-medium">Optativa</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={newMateria.es_electiva}
+                onChange={(e) => setNewMateria({ ...newMateria, es_electiva: e.target.checked })}
+                className="w-4 h-4"
+              />
+              <span className="text-sm font-medium">Electiva</span>
+            </label>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

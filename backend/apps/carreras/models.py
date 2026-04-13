@@ -7,7 +7,7 @@ class Carrera(models.Model):
     nombre = models.CharField(max_length=200)
     unidad_academica = models.ForeignKey(
         UnidadAcademica,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='carreras'
     )
     duracion_anios = models.IntegerField()
@@ -25,6 +25,6 @@ class Carrera(models.Model):
     def delete(self, *args, **kwargs):
         if self.planes.exists():
             raise ValidationError(
-                f"No se puede eliminar la Carrera '{self.nombre}' porque tiene Planes de Estudio asociados."
+                f"No se puede eliminar la carrera '{self.nombre}' porque tiene planes de estudio associados."
             )
         super().delete(*args, **kwargs)

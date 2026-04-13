@@ -87,3 +87,85 @@ class PlanDeEstudioViewSet(viewsets.ModelViewSet):
             )
         
         return Response(PlanDeEstudioSerializer(nuevo_plan).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    def agregar_materia(self, request, pk=None):
+        plan = self.get_object()
+        materia_id = request.data.get('materia')
+        
+        if not materia_id:
+            return Response({'error': 'Debe seleccionar una materia'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        from apps.materias.models import Materia
+        try:
+            materia = Materia.objects.get(id=materia_id)
+        except Materia.DoesNotExist:
+            return Response({'error': 'Materia no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if plan.materias_plan.filter(materia=materia).exists():
+            return Response({'error': 'La materia ya está asociada a este plan'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        max_orden = plan.materias_plan.filter(
+            anio_cursado=request.data.get('anio_cursado', 1),
+            cuatrimestre=request.data.get('cuatrimestre', 1)
+        ).count()
+        
+        materia_plan = MateriaPlan.objects.create(
+            plan_de_estudio=plan,
+            materia=materia,
+            anio_cursado=request.data.get('anio_cursado', 1),
+            cuatrimestre=request.data.get('cuatrimestre', 1),
+            area_disciplinar=request.data.get('area_disciplinar', 'Derecho'),
+            formato=request.data.get('formato', 'Teórico aplicado'),
+            es_optativa=request.data.get('es_optativa', False),
+            es_electiva=request.data.get('es_electiva', False),
+            orden=max_orden + 1
+        )
+        
+        return Response(MateriaPlanSerializer(materia_plan).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    def agregar_materia_desde_materia(self, request, pk=None):
+        plan = self.get_object()
+        materia_id = request.data.get('materia')
+        
+        if not materia_id:
+            return Response({'error': 'Debe seleccionar una materia'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        from apps.materias.models import Materia
+        try:
+            materia = Materia.objects.get(id=int(materia_id))
+        except Materia.DoesNotExist:
+            return Response({'error': 'Materia no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if plan.materias_plan.filter(materia=materia).exists():
+            return Response({'error': 'La materia ya está asociada a este plan'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        max_orden = plan.materias_plan.count() + 1
+        
+        materia_plan = MateriaPlan.objects.create(
+            plan_de_estudio=plan,
+            materia=materia,
+            anio_cursado=1,
+            cuatrimestre=1,
+            area_disciplinar='Derecho',
+            formato='Teórico aplicado',
+            orden=max_orden
+        )
+        
+        return Response(MateriaPlanSerializer(materia_plan).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    def eliminar_materia_desde_materia(self, request, pk=None):
+        plan = self.get_object()
+        materia_id = request.data.get('materia_id')
+        
+        if not materia_id:
+            return Response({'error': 'Se requiere el ID de la materia'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            materia_plan = plan.materias_plan.get(materia_id=int(materia_id))
+            materia_plan.delete()
+            return Response({'status': 'Materia eliminada del plan'})
+        except MateriaPlan.DoesNotExist:
+            return Response({'error': 'La materia no está asociada a este plan'}, status=status.HTTP_404_NOT_FOUND)

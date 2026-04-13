@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { unidadesAcademicasService } from '../services/api';
 import toast from 'react-hot-toast';
+import { ConfirmModal, AlertModal } from '../components/Modal';
 
 export default function UnidadesAcademicas() {
   const [unidades, setUnidades] = useState([]);
@@ -10,6 +11,10 @@ export default function UnidadesAcademicas() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({ nombre: '', sigla: '', descripcion: '' });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     loadUnidades();
@@ -58,14 +63,22 @@ export default function UnidadesAcademicas() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('¿Está seguro de eliminar esta unidad académica?')) return;
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await unidadesAcademicasService.delete(id);
+      await unidadesAcademicasService.delete(deleteId);
       toast.success('Unidad académica eliminada');
       loadUnidades();
+      setShowDeleteModal(false);
+      setDeleteId(null);
     } catch (error) {
-      toast.error(error.response?.data?.error || 'No se puede eliminar: tiene carreras asociadas');
+      setErrorMessage(error.response?.data?.error || 'No se puede eliminar: tiene carreras asociadas');
+      setShowDeleteModal(false);
+      setShowErrorModal(true);
     }
   };
 
@@ -141,9 +154,13 @@ export default function UnidadesAcademicas() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">{editing ? 'Editar' : 'Nueva'} Unidad Académica</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-gray-500/75" onClick={() => setShowModal(false)} />
+          <div className="relative z-10 w-full max-w-4xl rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">{editing ? 'Editar' : 'Nueva'} Unidad Académica</h3>
+              <button onClick={() => setShowModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl">✕</button>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Nombre</label>
@@ -182,6 +199,25 @@ export default function UnidadesAcademicas() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Confirmar eliminación"
+        message="¿Está seguro de eliminar esta unidad académica?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
+
+      <AlertModal
+        open={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="¡Error!"
+        message={errorMessage}
+        buttonText="Entendido"
+        type="danger"
+      />
     </div>
   );
 }

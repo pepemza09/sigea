@@ -46,7 +46,7 @@ function AppLayout() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} isCollapsed={isCollapsed} />
       
-      <div className={`main-content transition-all duration-300 ${isCollapsed ? 'lg:ml-20' : 'lg:ml-64'}`}>
+      <div className={`main-content transition-all duration-300 ${isCollapsed ? 'lg:ml-20' : 'lg:ml-64'} ${sidebarOpen ? 'ml-0' : ''}`}>
         <Header setSidebarOpen={setSidebarOpen} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
         
         <main className="p-4 lg:p-6">

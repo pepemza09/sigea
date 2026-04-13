@@ -13,7 +13,17 @@
 }
 
 .sidebar {
-  @apply fixed left-0 top-0 z-50 h-screen -translate-x-full transition-all duration-300 ease-in-out lg:translate-x-0;
+  @apply fixed left-0 top-0 z-50 h-screen transition-all duration-300 ease-in-out;
+}
+
+@layer utilities {
+  .sidebar-hidden {
+    @apply -translate-x-full lg:translate-x-0;
+  }
+  
+  .sidebar-visible {
+    @apply translate-x-0;
+  }
 }
 
 .sidebar-dark {
@@ -93,11 +103,19 @@
 }
 
 .modal-overlay {
-  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+  @apply fixed inset-0 bg-gray-500/75 flex items-center justify-center z-50;
 }
 
 .modal {
   @apply bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-auto;
+}
+
+.modal-full {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full mx-4 max-w-full h-full;
+}
+
+.modal-overlay-full {
+  @apply fixed inset-0 bg-gray-500/75 flex items-center justify-center z-50 p-4;
 }
 
 .toast-container {

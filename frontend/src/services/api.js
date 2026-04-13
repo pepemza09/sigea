@@ -47,6 +47,9 @@ export const planesService = {
   getMalla: (id) => api.get(`planes/${id}/malla/`),
   reorder: (id, materias) => api.post(`planes/${id}/reordenar/`, { materias }),
   clonar: (id, data) => api.post(`planes/${id}/clonar/`, data),
+  addMateria: (id, data) => api.post(`planes/${id}/agregar_materia/`, data),
+  addMateriaToMateria: (planId, data) => api.post(`planes/${planId}/agregar_materia_desde_materia/`, data),
+  removeMateriaFromMateria: (planId, materiaId) => api.post(`planes/${planId}/eliminar_materia_desde_materia/`, { materia_id: materiaId }),
 };
 
 export const materiasService = {
@@ -55,6 +58,8 @@ export const materiasService = {
   create: (data) => api.post('materias/', data),
   update: (id, data) => api.put(`materias/${id}/`, data),
   delete: (id) => api.delete(`materias/${id}/`),
+  associatePlan: (materiaId, planId) => api.post(`materias/${materiaId}/associate_plan/`, { plan_id: planId }),
+  dissociatePlan: (materiaId, planId) => api.post(`materias/${materiaId}/dissociate_plan/`, { plan_id: planId }),
 };
 
 export const equivalenciasService = {

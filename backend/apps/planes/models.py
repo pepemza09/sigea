@@ -25,7 +25,7 @@ class PlanDeEstudio(models.Model):
     anio_aprobacion = models.IntegerField()
     carrera = models.ForeignKey(
         Carrera,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='planes'
     )
     duracion_anios = models.IntegerField()
@@ -46,11 +46,11 @@ class PlanDeEstudio(models.Model):
     def delete(self, *args, **kwargs):
         if self.materias_plan.exists():
             raise ValidationError(
-                f"No se puede eliminar el Plan de Estudio '{self.nombre}' porque tiene Materias asociadas."
+                f"No se puede eliminar el plan de estudio '{self.nombre}' porque tiene materias associadas."
             )
         if self.equivalencias_origen.exists() or self.equivalencias_destino.exists():
             raise ValidationError(
-                f"No se puede eliminar el Plan de Estudio '{self.nombre}' porque está involucrado en una o más Equivalencias."
+                f"No se puede eliminar el plan de estudio '{self.nombre}' porque está involucrado en una o más equivalências."
             )
         super().delete(*args, **kwargs)
 
@@ -63,7 +63,7 @@ class MateriaPlan(models.Model):
     )
     materia = models.ForeignKey(
         'materias.Materia',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='planes_materia'
     )
     anio_cursado = models.IntegerField(help_text='1°, 2°, 3°, 4° año')

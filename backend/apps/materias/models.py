@@ -22,12 +22,12 @@ class Materia(models.Model):
         return f"{self.codigo} - {self.nombre}"
 
     def delete(self, *args, **kwargs):
-        from apps.planes.models import MateriaPlan
         from apps.equivalencias.models import EquivalenciaDetalle
 
-        if MateriaPlan.objects.filter(materia=self).exists():
+        if EquivalenciaDetalle.objects.filter(materia_origen__materia=self).exists() or \
+           EquivalenciaDetalle.objects.filter(materia_destino__materia=self).exists():
             raise ValidationError(
-                f"No se puede eliminar la Materia '{self.nombre}' ({self.codigo}) porque está asignada a uno o más Planes de Estudio."
+                f"No se puede eliminar la materia '{self.nombre}' ({self.codigo}) porque está involucrada en una o más equivalencias."
             )
         
         super().delete(*args, **kwargs)
