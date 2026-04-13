@@ -4,6 +4,7 @@ from apps.unidades_academicas.models import UnidadAcademica
 
 
 class Carrera(models.Model):
+    codigo = models.CharField(max_length=10, unique=True, help_text="Código de la carrera (ej: LCI, LDA)")
     nombre = models.CharField(max_length=200)
     unidad_academica = models.ForeignKey(
         UnidadAcademica,

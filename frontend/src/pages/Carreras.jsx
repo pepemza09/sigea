@@ -16,7 +16,7 @@ export default function Carreras() {
   const [deleteId, setDeleteId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [editing, setEditing] = useState(null);
-  const [formData, setFormData] = useState({ nombre: '', unidad_academica: '', duracion_anios: 4 });
+  const [formData, setFormData] = useState({ codigo: '', nombre: '', unidad_academica: '', duracion_anios: 4 });
 
   useEffect(() => {
     loadData();
@@ -58,7 +58,7 @@ export default function Carreras() {
       }
       setShowModal(false);
       setEditing(null);
-      setFormData({ nombre: '', unidad_academica: '', duracion_anios: 4 });
+setFormData({ codigo: '', nombre: '', unidad_academica: '', duracion_anios: 4 });
       loadData();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar');
@@ -68,6 +68,7 @@ export default function Carreras() {
   const handleEdit = (carrera) => {
     setEditing(carrera.id);
     setFormData({ 
+      codigo: carrera.codigo,
       nombre: carrera.nombre, 
       unidad_academica: carrera.unidad_academica, 
       duracion_anios: carrera.duracion_anios 
@@ -142,6 +143,7 @@ export default function Carreras() {
           <table className="table">
             <thead>
               <tr>
+                <th>Código</th>
                 <th>Nombre</th>
                 <th>Unidad Académica</th>
                 <th>Duración</th>
@@ -154,6 +156,7 @@ export default function Carreras() {
               {carreras.length > 0 ? (
                 carreras.map((carrera) => (
                   <tr key={carrera.id}>
+                    <td><span className="font-mono font-medium text-primary-600">{carrera.codigo}</span></td>
                     <td className="font-medium">{carrera.nombre}</td>
                     <td>{carrera.unidad_academica_sigla}</td>
                     <td>{carrera.duracion_anios} años</td>
@@ -196,6 +199,18 @@ export default function Carreras() {
               <button onClick={() => setShowModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl">✕</button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Código</label>
+                <input
+                  type="text"
+                  value={formData.codigo}
+                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value.toUpperCase() })}
+                  className="input"
+                  placeholder="LDA"
+                  required
+                  disabled={!!editing}
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Nombre</label>
                 <input

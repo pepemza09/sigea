@@ -10,7 +10,7 @@ class CarreraSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Carrera
-        fields = ['id', 'nombre', 'unidad_academica', 'unidad_academica_nombre', 'unidad_academica_sigla', 
+        fields = ['id', 'codigo', 'nombre', 'unidad_academica', 'unidad_academica_nombre', 'unidad_academica_sigla', 
                   'duracion_anios', 'created_at', 'updated_at', 'planes_count', 'plan_vigente']
         read_only_fields = ['created_at', 'updated_at']
     
