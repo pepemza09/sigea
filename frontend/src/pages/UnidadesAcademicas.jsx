@@ -10,7 +10,7 @@ export default function UnidadesAcademicas() {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [formData, setFormData] = useState({ codigo: '', nombre: '', sigla: '', descripcion: '' });
+  const [formData, setFormData] = useState({ nombre: '', sigla: '', descripcion: '' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -118,7 +118,6 @@ export default function UnidadesAcademicas() {
           <table className="table">
             <thead>
               <tr>
-                <th>Código</th>
                 <th>Nombre</th>
                 <th>Sigla</th>
                 <th>Carreras</th>
@@ -129,7 +128,6 @@ export default function UnidadesAcademicas() {
               {unidades.length > 0 ? (
                 unidades.map((unidad) => (
                   <tr key={unidad.id}>
-                    <td><span className="font-mono font-medium text-primary-600">{unidad.codigo}</span></td>
                     <td className="font-medium">{unidad.nombre}</td>
                     <td><span className="badge badge-primary">{unidad.sigla}</span></td>
                     <td>{unidad.carreras_count || 0}</td>
@@ -164,18 +162,6 @@ export default function UnidadesAcademicas() {
               <button onClick={() => setShowModal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl">✕</button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Código</label>
-                <input
-                  type="text"
-                  value={formData.codigo}
-                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value.toUpperCase() })}
-                  className="input"
-                  placeholder="FCE"
-                  required
-                  disabled={!!editing}
-                />
-              </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Nombre</label>
                 <input
