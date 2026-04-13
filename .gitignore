@@ -6,9 +6,13 @@ __pycache__/
 *.sqlite3
 node_modules/
 dist/
-.env.local
 
 # Docker
 postgres_data/
 static_volume/
 media_volume/
+
+# OS
+.DS_Store
+Thumbs.db
+*Zone.Identifier*
