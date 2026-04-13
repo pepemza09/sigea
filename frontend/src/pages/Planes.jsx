@@ -4,6 +4,7 @@ import { Plus, Search, Edit, Trash2, Eye, Copy } from 'lucide-react';
 import { planesService, carrerasService } from '../services/api';
 import toast from 'react-hot-toast';
 import { ConfirmModal, AlertModal } from '../components/Modal';
+import Autocomplete from '../components/Autocomplete';
 
 export default function Planes() {
   const [planes, setPlanes] = useState([]);
@@ -170,16 +171,14 @@ export default function Planes() {
               className="input"
             />
           </div>
-          <select
+          <Autocomplete
             value={filterCarrera}
-            onChange={(e) => setFilterCarrera(e.target.value)}
-            className="input w-full sm:w-48"
-          >
-            <option value="">Todas las carreras</option>
-            {carreras.map(c => (
-              <option key={c.id} value={c.id}>{c.nombre}</option>
-            ))}
-          </select>
+            onChange={(value) => setFilterCarrera(value || '')}
+            options={carreras}
+            optionLabel={(c) => `${c.unidad_academica_sigla} - ${c.nombre}`}
+            optionValue="id"
+            placeholder="Todas las carreras"
+          />
         </div>
 
         <div className="overflow-x-auto">
@@ -284,17 +283,15 @@ export default function Planes() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Carrera</label>
-                <select
+                <Autocomplete
                   value={formData.carrera}
-                  onChange={(e) => setFormData({ ...formData, carrera: parseInt(e.target.value) })}
-                  className="input"
+                  onChange={(value) => setFormData({ ...formData, carrera: value })}
+                  options={carreras}
+                  optionLabel={(c) => `${c.unidad_academica_sigla} - ${c.nombre}`}
+                  optionValue="id"
+                  placeholder="Seleccionar carrera..."
                   required
-                >
-                  <option value="">Seleccionar carrera</option>
-                  {carreras.map(c => (
-                    <option key={c.id} value={c.id}>{c.nombre}</option>
-                  ))}
-                </select>
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

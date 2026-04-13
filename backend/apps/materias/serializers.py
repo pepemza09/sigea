@@ -12,6 +12,7 @@ class MateriaSerializer(serializers.ModelSerializer):
         model = Materia
         fields = ['id', 'codigo', 'nombre', 'descripcion', 'horas_interaccion_pedagogica',
                   'horas_trabajo_autonomo', 'horas_totales', 'creditos', 
+                  'anio_cuatrimestre_default', 'cuatrimestre_default',
                   'created_at', 'updated_at', 'planes_count', 'planes_nombres', 'planes']
         read_only_fields = ['created_at', 'updated_at']
     

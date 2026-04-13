@@ -1,8 +1,9 @@
 import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Menu, Bell, Search, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { Menu, Bell, Search, ChevronLeft, ChevronRight, LogOut, Moon, Sun, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const breadcrumbMap = {
   '/': 'Dashboard',
@@ -11,6 +12,7 @@ const breadcrumbMap = {
   '/planes': 'Planes de Estudio',
   '/materias': 'Materias',
   '/equivalencias': 'Equivalencias',
+  '/configuraciones': 'Configuración',
 };
 
 export default function Header({ setSidebarOpen, isCollapsed, setIsCollapsed }) {
@@ -18,6 +20,7 @@ export default function Header({ setSidebarOpen, isCollapsed, setIsCollapsed }) 
   const currentPage = breadcrumbMap[location.pathname] || 'Página';
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const [csrfToken, setCsrfToken] = useState('');
 
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function Header({ setSidebarOpen, isCollapsed, setIsCollapsed }) 
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-95"
             title={isCollapsed ? 'Expandir sidebar' : 'Colapsar sidebar'}
           >
             {isCollapsed ? <ChevronRight size={18} className="text-gray-600 dark:text-gray-300" /> : <ChevronLeft size={18} className="text-gray-600 dark:text-gray-300" />}
@@ -58,7 +61,7 @@ export default function Header({ setSidebarOpen, isCollapsed, setIsCollapsed }) 
           
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-95"
           >
             <Menu size={20} className="text-gray-600 dark:text-gray-300" />
           </button>
@@ -80,16 +83,32 @@ export default function Header({ setSidebarOpen, isCollapsed, setIsCollapsed }) 
             />
           </div>
           
-          <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 relative">
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-95"
+            title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+          >
+            {theme === 'dark' ? <Sun size={18} className="text-gray-600 dark:text-gray-300" /> : <Moon size={18} className="text-gray-600 dark:text-gray-300" />}
+          </button>
+          
+          <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-95 relative">
             <Bell size={18} className="text-gray-600 dark:text-gray-300" />
             <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-danger-500 rounded-full"></span>
           </button>
+
+          <Link
+            to="/configuraciones"
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-95"
+            title="Configuración"
+          >
+            <Settings size={18} className="text-gray-600 dark:text-gray-300" />
+          </Link>
 
           <div className="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200 dark:border-gray-700">
             <span className="hidden md:block text-sm text-gray-600 dark:text-gray-300">{user?.username}</span>
             <button
               onClick={handleLogout}
-              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110 active:scale-95"
               title="Cerrar sesión"
             >
               <LogOut size={18} className="text-gray-600 dark:text-gray-300" />

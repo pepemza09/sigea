@@ -10,6 +10,8 @@ class Materia(models.Model):
     horas_trabajo_autonomo = models.IntegerField()
     horas_totales = models.IntegerField()
     creditos = models.DecimalField(max_digits=5, decimal_places=2)
+    anio_cuatrimestre_default = models.IntegerField(default=1, help_text="Año por defecto en la malla curricular")
+    cuatrimestre_default = models.IntegerField(default=1, help_text="Cuatrimestre por defecto en la malla curricular")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

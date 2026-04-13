@@ -7,9 +7,8 @@ import {
   FileText,
   ArrowLeftRight,
   LayoutDashboard,
-  Moon,
-  Sun,
-  X
+  X,
+  Settings
 } from 'lucide-react';
 
 const menuItems = [
@@ -83,21 +82,6 @@ export default function Sidebar({ isOpen, setIsOpen, isCollapsed }) {
               );
             })}
           </nav>
-
-          <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={toggleTheme}
-              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? (theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro') : undefined}
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              {!isCollapsed && (
-                <span className="font-medium">
-                  {theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
-                </span>
-              )}
-            </button>
-          </div>
         </div>
       </div>
     </>

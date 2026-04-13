@@ -12,6 +12,7 @@ import Planes from './pages/Planes';
 import Malla from './pages/Malla';
 import Materias from './pages/Materias';
 import Equivalencias from './pages/Equivalencias';
+import Configuraciones from './pages/Configuraciones';
 import Login from './pages/Login';
 
 function ProtectedRoute({ children }) {
@@ -58,6 +59,7 @@ function AppLayout() {
             <Route path="/planes/:id/malla" element={<Malla />} />
             <Route path="/materias" element={<Materias />} />
             <Route path="/equivalencias" element={<Equivalencias />} />
+            <Route path="/configuraciones" element={<Configuraciones />} />
           </Routes>
         </main>
       </div>

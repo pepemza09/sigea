@@ -25,7 +25,9 @@ export default function Materias() {
     horas_interaccion_pedagogica: 0,
     horas_trabajo_autonomo: 0,
     horas_totales: 0,
-    creditos: 0
+    creditos: 0,
+    anio_cuatrimestre_default: 1,
+    cuatrimestre_default: 1
   });
 
   useEffect(() => {
@@ -112,7 +114,9 @@ export default function Materias() {
         horas_interaccion_pedagogica: 0,
         horas_trabajo_autonomo: 0,
         horas_totales: 0,
-        creditos: 0
+        creditos: 0,
+        anio_cuatrimestre_default: 1,
+        cuatrimestre_default: 1
       });
       loadMaterias();
     } catch (error) {
@@ -129,7 +133,9 @@ export default function Materias() {
       horas_interaccion_pedagogica: materia.horas_interaccion_pedagogica,
       horas_trabajo_autonomo: materia.horas_trabajo_autonomo,
       horas_totales: materia.horas_totales,
-      creditos: materia.creditos
+      creditos: materia.creditos,
+      anio_cuatrimestre_default: materia.anio_cuatrimestre_default || 1,
+      cuatrimestre_default: materia.cuatrimestre_default || 1
     });
     setShowModal(true);
   };
@@ -264,7 +270,7 @@ export default function Materias() {
                 <input
                   type="text"
                   value={formData.codigo}
-                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value.toUpperCase() })}
                   className="input"
                   placeholder="570101"
                   required
@@ -276,7 +282,7 @@ export default function Materias() {
                 <input
                   type="text"
                   value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value.toUpperCase() })}
                   className="input"
                   required
                 />
@@ -333,6 +339,35 @@ export default function Materias() {
                     className="input"
                     required
                   />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Año por defecto</label>
+                  <select
+                    value={formData.anio_cuatrimestre_default}
+                    onChange={(e) => setFormData({ ...formData, anio_cuatrimestre_default: parseInt(e.target.value) })}
+                    className="input"
+                    required
+                  >
+                    <option value={1}>1° Año</option>
+                    <option value={2}>2° Año</option>
+                    <option value={3}>3° Año</option>
+                    <option value={4}>4° Año</option>
+                    <option value={5}>5° Año</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Cuatrimestre por defecto</label>
+                  <select
+                    value={formData.cuatrimestre_default}
+                    onChange={(e) => setFormData({ ...formData, cuatrimestre_default: parseInt(e.target.value) })}
+                    className="input"
+                    required
+                  >
+                    <option value={1}>1° Cuatrimestre</option>
+                    <option value={2}>2° Cuatrimestre</option>
+                  </select>
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4">
