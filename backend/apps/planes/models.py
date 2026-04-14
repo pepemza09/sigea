@@ -3,6 +3,27 @@ from django.core.exceptions import ValidationError
 from apps.carreras.models import Carrera
 
 
+class Area(models.Model):
+    nombre = models.CharField(max_length=200)
+    plan_de_estudio = models.ForeignKey(
+        PlanDeEstudio,
+        on_delete=models.CASCADE,
+        related_name='areas'
+    )
+    descripcion = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Área'
+        verbose_name_plural = 'Áreas'
+        ordering = ['nombre']
+        unique_together = ['nombre', 'plan_de_estudio']
+
+    def __str__(self):
+        return f"{self.nombre} - {self.plan_de_estudio.nombre}"
+
+
 class PlanDeEstudio(models.Model):
     AREA_DISCIPLINAR_CHOICES = [
         ('Matemáticas', 'Matemáticas'),

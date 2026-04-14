@@ -4,6 +4,7 @@ import {
   Building2,
   GraduationCap,
   BookOpen,
+  Layers,
   FileText,
   ArrowLeftRight,
   LayoutDashboard,
@@ -16,6 +17,7 @@ const menuItems = [
   { path: '/unidades-academicas', icon: Building2, label: 'Unidades Académicas' },
   { path: '/carreras', icon: GraduationCap, label: 'Carreras' },
   { path: '/planes', icon: BookOpen, label: 'Planes de Estudio' },
+  { path: '/areas', icon: Layers, label: 'Áreas' },
   { path: '/materias', icon: FileText, label: 'Materias' },
   { path: '/equivalencias', icon: ArrowLeftRight, label: 'Equivalencias' },
 ];

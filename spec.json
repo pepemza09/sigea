@@ -1,0 +1,710 @@
+{
+  "project": {
+    "name": "SIGeA",
+    "fullName": "Sistema Integral de Gestión Académica",
+    "description": "Sistema de gestión académica para universidades, desarrollado para la UNCuyo - Facultad de Ciencias Económicas",
+    "version": "1.0.0",
+    "repository": "https://github.com/pepemza09/sigea",
+    "techStack": {
+      "backend": {
+        "framework": "Django 5.0+",
+        "language": "Python 3.10+",
+        "database": "PostgreSQL",
+        "orm": "Django ORM",
+        "api": "Django REST Framework"
+      },
+      "frontend": {
+        "framework": "React 18",
+        "buildTool": "Vite",
+        "styling": "Tailwind CSS 3.4",
+        "routing": "React Router DOM 6",
+        "httpClient": "Axios",
+        "icons": "Lucide React + Heroicons",
+        "uiComponents": "@headlessui/react"
+      },
+      "devops": {
+        "containerization": "Docker + Docker Compose"
+      }
+    }
+  },
+
+  "uiux": {
+    "theme": {
+      "mode": "Light/Dark mode conmutável",
+      "approach": "Moderno, limpio, orientado a la administración académica",
+      "fontFamily": "Poppins, system-ui, -apple-system, sans-serif"
+    },
+    "colors": {
+      "primary": {
+        "name": "Blue",
+        "default": "#3b82f6",
+        "50": "#eff6ff",
+        "100": "#dbeafe",
+        "200": "#bfdbfe",
+        "300": "#93c5fd",
+        "400": "#60a5fa",
+        "500": "#3b82f6",
+        "600": "#2563eb",
+        "700": "#1d4ed8",
+        "800": "#1e40af",
+        "900": "#1e3a8a"
+      },
+      "success": {
+        "name": "Green",
+        "default": "#22c55e",
+        "50": "#f0fdf4",
+        "100": "#dcfce7",
+        "200": "#bbf7d0",
+        "300": "#86efac",
+        "400": "#4ade80",
+        "500": "#22c55e",
+        "600": "#16a34a",
+        "700": "#15803d",
+        "800": "#166534",
+        "900": "#14532d"
+      },
+      "warning": {
+        "name": "Amber",
+        "default": "#f59e0b",
+        "50": "#fffbeb",
+        "100": "#fef3c7",
+        "200": "#fde68a",
+        "300": "#fcd34d",
+        "400": "#fbbf24",
+        "500": "#f59e0b",
+        "600": "#d97706",
+        "700": "#b45309",
+        "800": "#92400e",
+        "900": "#78350f"
+      },
+      "danger": {
+        "name": "Red",
+        "default": "#ef4444",
+        "50": "#fef2f2",
+        "100": "#fee2e2",
+        "200": "#fecaca",
+        "300": "#fca5a5",
+        "400": "#f87171",
+        "500": "#ef4444",
+        "600": "#dc2626",
+        "700": "#b91c1c",
+        "800": "#991b1b",
+        "900": "#7f1d1d"
+      },
+      "grays": {
+        "50": "#f9fafb",
+        "100": "#f3f4f6",
+        "200": "#e5e7eb",
+        "300": "#d1d5db",
+        "400": "#9ca3af",
+        "500": "#6b7280",
+        "600": "#4b5563",
+        "700": "#374151",
+        "800": "#1f2937",
+        "900": "#111827"
+      }
+    },
+    "layout": {
+      "sidebar": {
+        "width": {
+          "expanded": "256px (w-64)",
+          "collapsed": "80px (w-20)"
+        },
+        "position": "fixed left",
+        "behavior": "Oculto en mobile, colapsable en desktop",
+        "background": {
+          "light": "white (#ffffff)",
+          "dark": "gray-800 (#1f2937)"
+        },
+        "border": {
+          "light": "border-gray-200",
+          "dark": "border-gray-700"
+        },
+        "logo": {
+          "image": "https://media.licdn.com/dms/image/v2/D4D0BAQHfA7Zs3POWgw/company-logo_200_200/B4DZUeo4GqHkAI-/0/1739975787365/uncuyo_logo",
+          "size": "w-10 h-10",
+          "borderRadius": "rounded-lg"
+        },
+        "items": {
+          "iconSize": "20px",
+          "padding": "px-3 py-2.5",
+          "borderRadius": "rounded-lg",
+          "activeBackground": "bg-primary-500 text-white",
+          "inactiveColor": "text-gray-700 dark:text-gray-300",
+          "hoverBackground": "hover:bg-gray-100 dark:hover:bg-gray-700"
+        }
+      },
+      "header": {
+        "height": "h-14 (56px)",
+        "position": "sticky top-0",
+        "background": {
+          "light": "bg-white",
+          "dark": "bg-gray-800"
+        },
+        "border": {
+          "light": "border-gray-200",
+          "dark": "border-gray-700"
+        },
+        "elements": [
+          {
+            "name": "Botón Collapse Sidebar",
+            "icon": "ChevronLeft / ChevronRight",
+            "iconSize": "18px",
+            "iconColor": "text-gray-600 dark:text-gray-300",
+            "behavior": "Oculto en mobile, toggle collapse sidebar",
+            "animations": "hover:scale-110 active:scale-95 transition-all duration-200"
+          },
+          {
+            "name": "Botón Menú Mobile",
+            "icon": "Menu",
+            "iconSize": "20px",
+            "iconColor": "text-gray-600 dark:text-gray-300",
+            "behavior": "Solo visible en mobile"
+          },
+          {
+            "name": "Breadcrumb",
+            "format": "SIGeA / Página Actual",
+            "visibleOn": "sm+"
+          },
+          {
+            "name": "Barra de Búsqueda",
+            "icon": "Search",
+            "iconSize": "16px",
+            "iconColor": "text-gray-400",
+            "background": "bg-gray-100 dark:bg-gray-700",
+            "placeholder": "Buscar...",
+            "width": "w-40",
+            "visibleOn": "md+"
+          },
+          {
+            "name": "Toggle Tema Oscuro",
+            "icon": "Moon / Sun",
+            "iconSize": "18px",
+            "iconColor": "text-gray-600 dark:text-gray-300",
+            "animations": "hover:scale-110 active:scale-95 transition-all duration-200"
+          },
+          {
+            "name": "Botón Notificaciones",
+            "icon": "Bell",
+            "iconSize": "18px",
+            "iconColor": "text-gray-600 dark:text-gray-300",
+            "badge": "w-1.5 h-1.5 bg-danger-500 rounded-full (punto rojo)",
+            "animations": "hover:scale-110 active:scale-95 transition-all duration-200"
+          },
+          {
+            "name": "Botón Configuración",
+            "icon": "Settings",
+            "iconSize": "18px",
+            "iconColor": "text-gray-600 dark:text-gray-300",
+            "link": "/configuraciones",
+            "animations": "hover:scale-110 active:scale-95 transition-all duration-200"
+          },
+          {
+            "name": "Usuario",
+            "display": "username del usuario logueado",
+            "visibleOn": "md+",
+            "separator": "border-l border-gray-200 dark:border-gray-700"
+          },
+          {
+            "name": "Botón Cerrar Sesión",
+            "icon": "LogOut",
+            "iconSize": "18px",
+            "iconColor": "text-gray-600 dark:text-gray-300",
+            "animations": "hover:scale-110 active:scale-95 transition-all duration-200"
+          }
+        ]
+      },
+      "mainContent": {
+        "padding": "p-4 lg:p-6",
+        "margin": {
+          "expanded": "lg:ml-64",
+          "collapsed": "lg:ml-20"
+        },
+        "transition": "transition-all duration-300"
+      }
+    },
+    "components": {
+      "card": {
+        "class": "bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+      },
+      "button": {
+        "primary": {
+          "class": "bg-primary-500 text-white hover:bg-primary-600",
+          "padding": "px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+        },
+        "secondary": {
+          "class": "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600",
+          "padding": "px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+        },
+        "danger": {
+          "class": "bg-danger-500 text-white hover:bg-danger-600",
+          "padding": "px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+        },
+        "success": {
+          "class": "bg-success-500 text-white hover:bg-success-600",
+          "padding": "px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+        }
+      },
+      "input": {
+        "class": "w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent",
+        "placeholderColor": "placeholder-gray-400"
+      },
+      "table": {
+        "container": "w-full text-left",
+        "header": "px-4 py-3 text-sm font-semibold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50",
+        "cell": "px-4 py-3 border-t border-gray-200 dark:border-gray-700",
+        "rowHover": "hover:bg-gray-50 dark:hover:bg-gray-700/30"
+      },
+      "badge": {
+        "base": "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+        "success": "bg-success-50 text-success-600 dark:bg-success-900/30 dark:text-success-400",
+        "warning": "bg-warning-50 text-warning-600 dark:bg-warning-900/30 dark:text-warning-400",
+        "danger": "bg-danger-50 text-danger-600 dark:bg-danger-900/30 dark:text-danger-400",
+        "primary": "bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
+      },
+      "modal": {
+        "overlay": "fixed inset-0 bg-gray-500/75 flex items-center justify-center z-50",
+        "container": "bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-auto",
+        "fullWidth": "bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full mx-4 max-w-full h-full",
+        "title": "text-xl font-bold text-gray-900 dark:text-white",
+        "closeButton": "p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 text-xl"
+      },
+      "autocomplete": {
+        "library": "@headlessui/react",
+        "inputClass": "input",
+        "dropdownBg": "bg-white dark:bg-gray-800",
+        "optionActive": "bg-primary-500 text-white",
+        "optionInactive": "text-gray-900 dark:text-gray-100",
+        "checkIcon": "text-primary-500"
+      }
+    },
+    "pages": {
+      "dashboard": {
+        "title": "Dashboard",
+        "description": "Sistema Integral de Gestión Académica",
+        "sections": [
+          {
+            "type": "statCards",
+            "items": [
+              { "title": "Unidades Académicas", "icon": "Building2", "color": "bg-blue-500", "path": "/unidades-academicas" },
+              { "title": "Carreras", "icon": "GraduationCap", "color": "bg-green-500", "path": "/carreras" },
+              { "title": "Planes de Estudio", "icon": "BookOpen", "color": "bg-purple-500", "path": "/planes" },
+              { "title": "Materias", "icon": "FileText", "color": "bg-orange-500", "path": "/materias" }
+            ]
+          },
+          {
+            "type": "lastPlans",
+            "title": "Últimos Planes Modificados",
+            "link": "Ver todos -> /planes"
+          },
+          {
+            "type": "quickLinks",
+            "links": [
+              { "text": "Gestionar Equivalencias", "icon": "ArrowLeftRight", "color": "primary", "path": "/equivalencias" },
+              { "text": "Ver Mallas Curriculares", "icon": "BookOpen", "color": "green", "path": "/planes" },
+              { "text": "Catálogo de Materias", "icon": "FileText", "color": "orange", "path": "/materias" },
+              { "text": "Gestionar Carreras", "icon": "GraduationCap", "color": "purple", "path": "/carreras" }
+            ]
+          }
+        ]
+      },
+      "unidadesAcademicas": {
+        "title": "Unidades Académicas",
+        "description": "Gestión de facultades, escuelas e institutos",
+        "features": ["CRUD completo", "Búsqueda por nombre o sigla", "Contador de carreras", "Validación de eliminación"],
+        "tableColumns": ["Nombre", "Sigla", "Carreras", "Acciones"],
+        "formFields": [
+          { "name": "nombre", "type": "text", "required": true },
+          { "name": "sigla", "type": "text", "required": true },
+          { "name": "descripcion", "type": "textarea" }
+        ]
+      },
+      "carreras": {
+        "title": "Carreras",
+        "description": "Gestión de carreras y títulos",
+        "features": ["CRUD completo", "Búsqueda por nombre", "Filtro por unidad académica", "Validación de eliminación"],
+        "tableColumns": ["Código", "Nombre", "Unidad Académica", "Duración", "Planes", "Plan Vigente", "Acciones"],
+        "formFields": [
+          { "name": "codigo", "type": "text", "required": true, "uppercase": true, "disabledOnEdit": true },
+          { "name": "nombre", "type": "text", "required": true, "uppercase": true },
+          { "name": "unidad_academica", "type": "select", "required": true },
+          { "name": "duracion_anios", "type": "number", "required": true, "min": 1, "max": 10 }
+        ]
+      },
+      "planes": {
+        "title": "Planes de Estudio",
+        "description": "Gestión de planes curriculares",
+        "features": ["CRUD completo", "Búsqueda por nombre", "Filtro por carrera (Autocomplete)", "Clonación de planes", "Vínculo a Malla"],
+        "tableColumns": ["Nombre", "Carrera", "Año", "Duración", "Horas", "Créditos", "Estado", "Acciones"],
+        "formFields": [
+          { "name": "nombre", "type": "text", "required": true },
+          { "name": "anio_aprobacion", "type": "number", "required": true },
+          { "name": "carrera", "type": "autocomplete", "required": true },
+          { "name": "duracion_anios", "type": "number", "required": true, "min": 1, "max": 10 },
+          { "name": "carga_horaria_total", "type": "number", "required": true },
+          { "name": "creditos_totales", "type": "number", "required": true },
+          { "name": "es_vigente", "type": "checkbox" }
+        ],
+        "actions": [
+          { "icon": "Eye", "path": "/planes/:id/malla", "title": "Ver Malla" },
+          { "icon": "Copy", "title": "Clonar" },
+          { "icon": "Edit", "title": "Editar" },
+          { "icon": "Trash2", "title": "Eliminar" }
+        ]
+      },
+      "malla": {
+        "title": "Malla Curricular",
+        "description": "Visualización y gestión de la estructura de un plan de estudios",
+        "features": ["Tabla de cursos por año y cuatrimestre", "Agregar/editar/eliminar materias", "Colores por área disciplinar", "Indicadores de optativas/electivas", "Resumen de estadísticas"],
+        "areaColors": {
+          "Matemáticas": "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700",
+          "Derecho": "bg-gray-100 dark:bg-gray-700/30 border-gray-300 dark:border-gray-600",
+          "Gestión y Estrategia": "bg-purple-100 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700",
+          "Finanzas y Economía": "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700",
+          "Marketing": "bg-orange-100 dark:bg-orange-900/30 border-orange-300 dark:border-orange-700",
+          "Administración de Personas": "bg-pink-100 dark:bg-pink-900/30 border-pink-300 dark:border-pink-700",
+          "Administración de Operaciones y Tecnología": "bg-cyan-100 dark:bg-cyan-900/30 border-cyan-300 dark:border-cyan-700",
+          "Profesional": "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-300 dark:border-yellow-700"
+        },
+        "formFields": [
+          { "name": "materia", "type": "select", "required": true },
+          { "name": "anio_cursado", "type": "select", "required": true },
+          { "name": "cuatrimestre", "type": "select", "required": true },
+          { "name": "area_disciplinar", "type": "select", "required": true },
+          { "name": "formato", "type": "select", "required": true },
+          { "name": "es_optativa", "type": "checkbox" },
+          { "name": "es_electiva", "type": "checkbox" }
+        ]
+      },
+      "materias": {
+        "title": "Materias",
+        "description": "Catálogo global de materias",
+        "features": ["CRUD completo", "Búsqueda por código o nombre", "Asociación a planes", "Campos por defecto para la malla"],
+        "tableColumns": ["Código", "Nombre", "Horas Totales", "Créditos", "Planes", "Acciones"],
+        "formFields": [
+          { "name": "codigo", "type": "text", "required": true, "uppercase": true, "disabledOnEdit": true },
+          { "name": "nombre", "type": "text", "required": true, "uppercase": true },
+          { "name": "descripcion", "type": "textarea" },
+          { "name": "horas_interaccion_pedagogica", "type": "number", "required": true },
+          { "name": "horas_trabajo_autonomo", "type": "number", "required": true },
+          { "name": "horas_totales", "type": "number", "required": true },
+          { "name": "creditos", "type": "number", "step": "0.01", "required": true },
+          { "name": "anio_cuatrimestre_default", "type": "select", "required": true, "options": "1°-5° Año" },
+          { "name": "cuatrimestre_default", "type": "select", "required": true, "options": "1°-2° Cuatrimestre" }
+        ]
+      },
+      "equivalencias": {
+        "title": "Equivalencias",
+        "description": "Gestión de equivalencias entre planes de estudio",
+        "features": ["CRUD de equivalencias", "Comparativa entre planes", "Tipos: 1:1, 1:N, N:1", "Gestión de detalles"],
+        "tableColumns": ["Plan Origen", "Plan Destino", "Detalles", "Fecha", "Acciones"],
+        "formFields": [
+          { "name": "plan_origen", "type": "select", "required": true },
+          { "name": "plan_destino", "type": "select", "required": true }
+        ]
+      },
+      "configuraciones": {
+        "title": "Configuración",
+        "description": "Administra las configuraciones del sistema",
+        "layout": "Grid de tarjetas",
+        "cards": [
+          { "title": "Usuarios", "icon": "Users", "color": "bg-blue-500", "path": "/configuraciones/usuarios" },
+          { "title": "Períodos Lectivos", "icon": "Calendar", "color": "bg-green-500", "path": "/configuraciones/periodos" },
+          { "title": "Unidades Académicas", "icon": "Building2", "color": "bg-purple-500", "path": "/unidades-academicas" },
+          { "title": "Carreras", "icon": "BookOpen", "color": "bg-orange-500", "path": "/carreras" },
+          { "title": "Materias", "icon": "FileText", "color": "bg-red-500", "path": "/materias" },
+          { "title": "Planes de Estudio", "icon": "FileText", "color": "bg-teal-500", "path": "/planes" },
+          { "title": "Respaldo de Datos", "icon": "Database", "color": "bg-gray-500", "path": "/configuraciones/backup" },
+          { "title": "Roles y Permisos", "icon": "Shield", "color": "bg-indigo-500", "path": "/configuraciones/roles" },
+          { "title": "Configuración General", "icon": "Globe", "color": "bg-yellow-500", "path": "/configuraciones/general" }
+        ]
+      },
+      "login": {
+        "title": "Iniciar Sesión",
+        "logo": "UNCuyo",
+        "formFields": [
+          { "name": "username", "type": "text", "required": true, "placeholder": "Ingrese su usuario" },
+          { "name": "password", "type": "password", "required": true, "placeholder": "Ingrese su contraseña" }
+        ],
+        "validation": "Validación de campos obligatorios",
+        "footer": "UNCuyo - Facultad de Ciencias Económicas"
+      }
+    }
+  },
+
+  "backend": {
+    "models": {
+      "UnidadAcademica": {
+        "fields": [
+          { "name": "nombre", "type": "CharField", "maxLength": 200 },
+          { "name": "sigla", "type": "CharField", "maxLength": 20 },
+          { "name": "descripcion", "type": "TextField", "blank": true },
+          { "name": "created_at", "type": "DateTimeField", "autoNowAdd": true },
+          { "name": "updated_at", "type": "DateTimeField", "autoNow": true }
+        ],
+        "methods": ["delete - validación si tiene carreras asociadas"],
+        "ordering": ["nombre"]
+      },
+      "Carrera": {
+        "fields": [
+          { "name": "codigo", "type": "CharField", "maxLength": 10, "unique": true },
+          { "name": "nombre", "type": "CharField", "maxLength": 200 },
+          { "name": "unidad_academica", "type": "ForeignKey", "to": "UnidadAcademica", "onDelete": "CASCADE" },
+          { "name": "duracion_anios", "type": "IntegerField" },
+          { "name": "created_at", "type": "DateTimeField", "autoNowAdd": true },
+          { "name": "updated_at", "type": "DateTimeField", "autoNow": true }
+        ],
+        "methods": ["delete - validación si tiene planes asociados"],
+        "ordering": ["nombre"]
+      },
+      "PlanDeEstudio": {
+        "fields": [
+          { "name": "nombre", "type": "CharField", "maxLength": 200, "default": "Plan 2026" },
+          { "name": "anio_aprobacion", "type": "IntegerField" },
+          { "name": "carrera", "type": "ForeignKey", "to": "Carrera", "onDelete": "CASCADE" },
+          { "name": "duracion_anios", "type": "IntegerField" },
+          { "name": "carga_horaria_total", "type": "IntegerField" },
+          { "name": "creditos_totales", "type": "IntegerField" },
+          { "name": "es_vigente", "type": "BooleanField", "default": true },
+          { "name": "created_at", "type": "DateTimeField", "autoNowAdd": true },
+          { "name": "updated_at", "type": "DateTimeField", "autoNow": true }
+        ],
+        "choices": {
+          "area_disciplinar": [
+            "Matemáticas", "Derecho", "Gestión y Estrategia", "Finanzas y Economía",
+            "Marketing", "Administración de Personas", "Administración de Operaciones y Tecnología", "Profesional"
+          ],
+          "formato": [
+            "Teórico aplicado", "Taller", "Aplicación práctica de la Teoría"
+          ]
+        },
+        "methods": ["delete - validación si tiene materias o equivalencias asociadas"],
+        "ordering": ["-anio_aprobacion", "nombre"]
+      },
+      "Materia": {
+        "fields": [
+          { "name": "codigo", "type": "CharField", "maxLength": 20, "unique": true },
+          { "name": "nombre", "type": "CharField", "maxLength": 200 },
+          { "name": "descripcion", "type": "TextField", "blank": true },
+          { "name": "horas_interaccion_pedagogica", "type": "IntegerField" },
+          { "name": "horas_trabajo_autonomo", "type": "IntegerField" },
+          { "name": "horas_totales", "type": "IntegerField" },
+          { "name": "creditos", "type": "DecimalField", "maxDigits": 5, "decimalPlaces": 2 },
+          { "name": "anio_cuatrimestre_default", "type": "IntegerField", "default": 1 },
+          { "name": "cuatrimestre_default", "type": "IntegerField", "default": 1 },
+          { "name": "created_at", "type": "DateTimeField", "autoNowAdd": true },
+          { "name": "updated_at", "type": "DateTimeField", "autoNow": true }
+        ],
+        "methods": ["delete - validación si está en equivalencias"],
+        "ordering": ["codigo"]
+      },
+      "MateriaPlan": {
+        "fields": [
+          { "name": "plan_de_estudio", "type": "ForeignKey", "to": "PlanDeEstudio", "onDelete": "CASCADE" },
+          { "name": "materia", "type": "ForeignKey", "to": "Materia", "onDelete": "CASCADE" },
+          { "name": "anio_cursado", "type": "IntegerField" },
+          { "name": "cuatrimestre", "type": "IntegerField" },
+          { "name": "area_disciplinar", "type": "CharField", "maxLength": 100 },
+          { "name": "formato", "type": "CharField", "maxLength": 50 },
+          { "name": "es_optativa", "type": "BooleanField", "default": false },
+          { "name": "es_electiva", "type": "BooleanField", "default": false },
+          { "name": "orden", "type": "IntegerField" }
+        ],
+        "constraints": ["unique_together: ['plan_de_estudio', 'materia']"],
+        "ordering": ["anio_cursado", "cuatrimestre", "orden"]
+      },
+      "Equivalencia": {
+        "fields": [
+          { "name": "plan_origen", "type": "ForeignKey", "to": "PlanDeEstudio", "onDelete": "PROTECT" },
+          { "name": "plan_destino", "type": "ForeignKey", "to": "PlanDeEstudio", "onDelete": "PROTECT" },
+          { "name": "created_at", "type": "DateTimeField", "autoNowAdd": true }
+        ],
+        "constraints": ["unique_together: ['plan_origen', 'plan_destino']"]
+      },
+      "EquivalenciaDetalle": {
+        "fields": [
+          { "name": "equivalencia", "type": "ForeignKey", "to": "Equivalencia", "onDelete": "CASCADE" },
+          { "name": "materia_origen", "type": "ForeignKey", "to": "MateriaPlan", "onDelete": "PROTECT" },
+          { "name": "materia_destino", "type": "ForeignKey", "to": "MateriaPlan", "onDelete": "PROTECT" },
+          { "name": "tipo", "type": "CharField", "maxLength": 10 }
+        ],
+        "choices": {
+          "tipo": ["1:1 (Uno a uno)", "1:N (Una origen a varias destino)", "N:1 (Varias origen a una destino)"]
+        }
+      }
+    },
+    "api": {
+      "baseUrl": "/api/",
+      "endpoints": {
+        "unidadesAcademicas": {
+          "list": "GET /api/unidades-academicas/",
+          "retrieve": "GET /api/unidades-academicas/{id}/",
+          "create": "POST /api/unidades-academicas/",
+          "update": "PUT /api/unidades-academicas/{id}/",
+          "delete": "DELETE /api/unidades-academicas/{id}/"
+        },
+        "carreras": {
+          "list": "GET /api/carreras/",
+          "retrieve": "GET /api/carreras/{id}/",
+          "create": "POST /api/carreras/",
+          "update": "PUT /api/carreras/{id}/",
+          "delete": "DELETE /api/carreras/{id}/",
+          "planes": "GET /api/carreras/{id}/planes/"
+        },
+        "planes": {
+          "list": "GET /api/planes/",
+          "retrieve": "GET /api/planes/{id}/",
+          "create": "POST /api/planes/",
+          "update": "PUT /api/planes/{id}/",
+          "delete": "DELETE /api/planes/{id}/",
+          "malla": "GET /api/planes/{id}/malla/",
+          "reorder": "POST /api/planes/{id}/reordenar/",
+          "clonar": "POST /api/planes/{id}/clonar/",
+          "addMateria": "POST /api/planes/{id}/agregar_materia/"
+        },
+        "materias": {
+          "list": "GET /api/materias/",
+          "retrieve": "GET /api/materias/{id}/",
+          "create": "POST /api/materias/",
+          "update": "PUT /api/materias/{id}/",
+          "delete": "DELETE /api/materias/{id}/",
+          "associatePlan": "POST /api/materias/{id}/associate_plan/",
+          "dissociatePlan": "POST /api/materias/{id}/dissociate_plan/"
+        },
+        "equivalencias": {
+          "list": "GET /api/equivalencias/",
+          "retrieve": "GET /api/equivalencias/{id}/",
+          "create": "POST /api/equivalencias/",
+          "update": "PUT /api/equivalencias/{id}/",
+          "delete": "DELETE /api/equivalencias/{id}/",
+          "comparativa": "GET /api/equivalencias/comparativa/?plan_origen_id=X&plan_destino_id=Y",
+          "agregarDetalle": "POST /api/equivalencias/{id}/agregar_detalle/",
+          "editarDetalle": "PATCH /api/equivalencias/{id}/editar_detalle/{detalleId}/",
+          "eliminarDetalle": "DELETE /api/equivalencias/{id}/eliminar_detalle/{detalleId}/"
+        },
+        "auth": {
+          "login": "POST /api/auth/login/",
+          "logout": "POST /api/auth/logout/",
+          "me": "GET /api/auth/me/",
+          "csrf": "GET /api/csrf/"
+        }
+      }
+    },
+    "settings": {
+      "languageCode": "es-ar",
+      "timeZone": "America/Argentina/Mendoza",
+      "pagination": {
+        "class": "PageNumberPagination",
+        "pageSize": 20
+      },
+      "authentication": {
+        "classes": ["SessionAuthentication"],
+        "permission": "IsAuthenticatedOrReadOnly"
+      },
+      "cors": {
+        "allowAllOrigins": true,
+        "allowCredentials": true
+      }
+    }
+  },
+
+  "frontend": {
+    "architecture": {
+      "routing": "React Router DOM v6",
+      "stateManagement": "React Context (AuthContext, ThemeContext)",
+      "httpClient": "Axios con CSRF interceptors"
+    },
+    "contexts": {
+      "ThemeContext": {
+        "provider": "ThemeProvider",
+        "features": ["Dark/Light mode toggle", "Persistencia en localStorage (sigea-theme)", "Detección de preferencia del sistema"]
+      },
+      "AuthContext": {
+        "provider": "AuthProvider",
+        "features": ["Verificación de sesión al cargar", "Persistencia en localStorage (sigea_user)", "login/logout métodos"]
+      }
+    },
+    "components": {
+      "Autocomplete": {
+        "library": "@headlessui/react",
+        "features": ["Búsqueda en tiempo real", "Selección con teclado", "Visualización de valor seleccionado"]
+      },
+      "Modal": {
+        "variants": ["Modal básico", "ConfirmModal", "AlertModal"]
+      }
+    },
+    "services": {
+      "api": {
+        "baseUrl": "/api",
+        "withCredentials": true,
+        "csrfToken": "X-CSRFToken header"
+      }
+    }
+  },
+
+  "deployment": {
+    "docker": {
+      "backend": {
+        "image": "Python 3.10",
+        "port": 8000,
+        "command": "gunicorn core.wsgi --bind 0.0.0.0:8000"
+      },
+      "frontend": {
+        "image": "Node 18 + Nginx",
+        "port": 80,
+        "nginxConfig": "custom nginx.conf"
+      },
+      "database": {
+        "engine": "PostgreSQL",
+        "port": 5432
+      }
+    },
+    "compose": {
+      "services": ["postgres_db", "backend", "frontend"],
+      "ports": {
+        "frontend": "80:80",
+        "backend": "8000:8000"
+      },
+      "environment": {
+        "database": "DATABASE_NAME=sigea, DATABASE_USER=sigea_user, DATABASE_PASSWORD=sigea_pass_2026"
+      }
+    }
+  },
+
+  "assets": {
+    "logos": {
+      "uncuyo": "https://media.licdn.com/dms/image/v2/D4D0BAQHfA7Zs3POWgw/company-logo_200_200/B4DZUeo4GqHkAI-/0/1739975787365/uncuyo_logo"
+    }
+  },
+
+  "dependencies": {
+    "backend": {
+      "Django": ">=5.0,<6.0",
+      "djangorestframework": ">=3.14,<4.0",
+      "psycopg2-binary": ">=2.9,<3.0",
+      "gunicorn": ">=21.0,<22.0",
+      "python-dotenv": ">=1.0,<2.0",
+      "Pillow": ">=10.0,<11.0",
+      "django-cors-headers": ">=4.3,<5.0"
+    },
+    "frontend": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "react-router-dom": "^6.22.0",
+      "axios": "^1.6.7",
+      "react-hot-toast": "^2.4.1",
+      "lucide-react": "^0.330.0",
+      "@headlessui/react": "^1.7.18",
+      "@heroicons/react": "^2.1.1"
+    },
+    "frontendDev": {
+      "@types/react": "^18.2.55",
+      "@types/react-dom": "^18.2.19",
+      "@vitejs/plugin-react": "^4.2.1",
+      "autoprefixer": "^10.4.17",
+      "postcss": "^8.4.35",
+      "tailwindcss": "^3.4.1",
+      "vite": "^5.1.0"
+    }
+  }
+}

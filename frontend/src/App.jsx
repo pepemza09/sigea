@@ -10,6 +10,7 @@ import UnidadesAcademicas from './pages/UnidadesAcademicas';
 import Carreras from './pages/Carreras';
 import Planes from './pages/Planes';
 import Malla from './pages/Malla';
+import Areas from './pages/Areas';
 import Materias from './pages/Materias';
 import Equivalencias from './pages/Equivalencias';
 import Configuraciones from './pages/Configuraciones';
@@ -57,6 +58,7 @@ function AppLayout() {
             <Route path="/carreras" element={<Carreras />} />
             <Route path="/planes" element={<Planes />} />
             <Route path="/planes/:id/malla" element={<Malla />} />
+            <Route path="/areas" element={<Areas />} />
             <Route path="/materias" element={<Materias />} />
             <Route path="/equivalencias" element={<Equivalencias />} />
             <Route path="/configuraciones" element={<Configuraciones />} />

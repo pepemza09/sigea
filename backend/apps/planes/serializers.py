@@ -1,6 +1,26 @@
 from rest_framework import serializers
 from apps.unidades_academicas.serializers import UnidadAcademicaSerializer
-from .models import PlanDeEstudio, MateriaPlan
+from .models import PlanDeEstudio, MateriaPlan, Area
+
+
+class AreaSerializer(serializers.ModelSerializer):
+    plan_de_estudio_nombre = serializers.CharField(source='plan_de_estudio.nombre', read_only=True)
+    
+    class Meta:
+        model = Area
+        fields = ['id', 'nombre', 'descripcion', 'plan_de_estudio', 'plan_de_estudio_nombre', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+
+
+class AreaAutocompleteSerializer(serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Area
+        fields = ['id', 'nombre', 'label']
+    
+    def get_label(self, obj):
+        return f"{obj.nombre} - {obj.plan_de_estudio.nombre}"
 
 
 class MateriaPlanSerializer(serializers.ModelSerializer):

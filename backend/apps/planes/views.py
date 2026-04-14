@@ -3,8 +3,31 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from .models import PlanDeEstudio, MateriaPlan
-from .serializers import PlanDeEstudioSerializer, MateriaPlanSerializer
+from django.db.models import Q
+from .models import PlanDeEstudio, MateriaPlan, Area
+from .serializers import PlanDeEstudioSerializer, MateriaPlanSerializer, AreaSerializer, AreaAutocompleteSerializer
+
+
+class AreaViewSet(viewsets.ModelViewSet):
+    queryset = Area.objects.all()
+    serializer_class = AreaSerializer
+    filterset_fields = ['plan_de_estudio']
+
+    @action(detail=False, methods=['get'])
+    def autocomplete(self, request):
+        query = request.query_params.get('q', '')
+        plan_id = request.query_params.get('plan_id')
+        
+        areas = Area.objects.all()
+        
+        if query:
+            areas = areas.filter(nombre__icontains=query)
+        
+        if plan_id:
+            areas = areas.filter(plan_de_estudio_id=plan_id)
+        
+        serializer = AreaAutocompleteSerializer(areas[:20], many=True)
+        return Response(serializer.data)
 
 
 class PlanDeEstudioViewSet(viewsets.ModelViewSet):

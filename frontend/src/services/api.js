@@ -52,6 +52,22 @@ export const planesService = {
   removeMateriaFromMateria: (planId, materiaId) => api.post(`planes/${planId}/eliminar_materia_desde_materia/`, { materia_id: materiaId }),
 };
 
+export const areasService = {
+  getAll: () => api.get('planes/areas/'),
+  getById: (id) => api.get(`planes/areas/${id}/`),
+  create: (data) => api.post('planes/areas/', data),
+  update: (id, data) => api.put(`planes/areas/${id}/`, data),
+  delete: (id) => api.delete(`planes/areas/${id}/`),
+  autocomplete: (query, planId) => {
+    let url = 'planes/areas/autocomplete/';
+    const params = new URLSearchParams();
+    if (query) params.append('q', query);
+    if (planId) params.append('plan_id', planId);
+    if (params.toString()) url += '?' + params.toString();
+    return api.get(url);
+  },
+};
+
 export const materiasService = {
   getAll: () => api.get('materias/'),
   getById: (id) => api.get(`materias/${id}/`),

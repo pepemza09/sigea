@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, BookOpen, X } from 'lucide-react';
-import { materiasService, planesService } from '../services/api';
+import { materiasService, planesService, areasService } from '../services/api';
 import toast from 'react-hot-toast';
 import { ConfirmModal, AlertModal } from '../components/Modal';
+import Autocomplete from '../components/Autocomplete';
 
 export default function Materias() {
   const [materias, setMaterias] = useState([]);
   const [planes, setPlanes] = useState([]);
+  const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -18,6 +20,7 @@ export default function Materias() {
   const [materiaForPlans, setMateriaForPlans] = useState(null);
   const [associatedPlans, setAssociatedPlans] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [areaQuery, setAreaQuery] = useState('');
   const [formData, setFormData] = useState({
     codigo: '',
     nombre: '',
@@ -27,11 +30,13 @@ export default function Materias() {
     horas_totales: 0,
     creditos: 0,
     anio_cuatrimestre_default: 1,
-    cuatrimestre_default: 1
+    cuatrimestre_default: 1,
+    area: null
   });
 
   useEffect(() => {
     loadMaterias();
+    loadAreas();
   }, [search]);
 
   const loadMaterias = async () => {
@@ -58,6 +63,25 @@ export default function Materias() {
       setPlanes(res.data.results || res.data);
     } catch (error) {
       toast.error('Error al cargar planes');
+    }
+  };
+
+  const loadAreas = async () => {
+    try {
+      const res = await areasService.getAll();
+      setAreas(res.data);
+    } catch (error) {
+      console.error('Error al cargar áreas:', error);
+    }
+  };
+
+  const searchAreas = async (query) => {
+    try {
+      const res = await areasService.autocomplete(query);
+      return res.data;
+    } catch (error) {
+      console.error('Error searching areas:', error);
+      return [];
     }
   };
 
@@ -116,8 +140,10 @@ export default function Materias() {
         horas_totales: 0,
         creditos: 0,
         anio_cuatrimestre_default: 1,
-        cuatrimestre_default: 1
+        cuatrimestre_default: 1,
+        area: null
       });
+      setAreaQuery('');
       loadMaterias();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Error al guardar');
@@ -135,8 +161,10 @@ export default function Materias() {
       horas_totales: materia.horas_totales,
       creditos: materia.creditos,
       anio_cuatrimestre_default: materia.anio_cuatrimestre_default || 1,
-      cuatrimestre_default: materia.cuatrimestre_default || 1
+      cuatrimestre_default: materia.cuatrimestre_default || 1,
+      area: materia.area_id || null
     });
+    setAreaQuery(materia.area_nombre || '');
     setShowModal(true);
   };
 
@@ -184,8 +212,11 @@ export default function Materias() {
           horas_interaccion_pedagogica: 0,
           horas_trabajo_autonomo: 0,
           horas_totales: 0,
-          creditos: 0
-        }); setShowModal(true); }} className="btn btn-primary flex items-center gap-2">
+          creditos: 0,
+          anio_cuatrimestre_default: 1,
+          cuatrimestre_default: 1,
+          area: null
+        }); setAreaQuery(''); setShowModal(true); }} className="btn btn-primary flex items-center gap-2">
           <Plus size={20} /> Nueva Materia
         </button>
       </div>
@@ -369,6 +400,18 @@ export default function Materias() {
                     <option value={2}>2° Cuatrimestre</option>
                   </select>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Área *</label>
+                <Autocomplete
+                  value={formData.area}
+                  onChange={(val) => setFormData({ ...formData, area: val })}
+                  options={areas}
+                  optionLabel="nombre"
+                  placeholder="Buscar área..."
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Seleccione el área a la que pertenece la materia</p>
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">Cancelar</button>

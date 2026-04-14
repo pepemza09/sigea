@@ -12,6 +12,13 @@ class Materia(models.Model):
     creditos = models.DecimalField(max_digits=5, decimal_places=2)
     anio_cuatrimestre_default = models.IntegerField(default=1, help_text="Año por defecto en la malla curricular")
     cuatrimestre_default = models.IntegerField(default=1, help_text="Cuatrimestre por defecto en la malla curricular")
+    area = models.ForeignKey(
+        'planes.Area',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='materias'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
