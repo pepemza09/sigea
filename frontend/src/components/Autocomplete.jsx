@@ -14,16 +14,29 @@ export default function Autocomplete({
 }) {
   const [query, setQuery] = useState('');
 
+  const safeOptions = Array.isArray(options) ? options : [];
+  
+  if (safeOptions.length === 0) {
+    return (
+      <input
+        type="text"
+        className="input"
+        placeholder={placeholder + ' (sin opciones)'}
+        disabled
+      />
+    );
+  }
+  
   const filteredOptions = query === ''
-    ? options
-    : options.filter((option) => {
+    ? safeOptions
+    : safeOptions.filter((option) => {
         const label = typeof optionLabel === 'function' ? optionLabel(option) : option[optionLabel];
-        return label.toLowerCase().includes(query.toLowerCase());
+        return label ? label.toLowerCase().includes(query.toLowerCase()) : false;
       });
 
   const getDisplayValue = () => {
-    if (!value) return '';
-    const selected = options.find(o => o[optionValue] === value || o[optionValue] === parseInt(value));
+    if (!value || safeOptions.length === 0) return '';
+    const selected = safeOptions.find(o => o[optionValue] === value || o[optionValue] === parseInt(value));
     if (!selected) return '';
     return typeof optionLabel === 'function' ? optionLabel(selected) : selected[optionLabel];
   };

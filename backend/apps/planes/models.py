@@ -6,7 +6,7 @@ from apps.carreras.models import Carrera
 class Area(models.Model):
     nombre = models.CharField(max_length=200)
     plan_de_estudio = models.ForeignKey(
-        PlanDeEstudio,
+        'planes.PlanDeEstudio',
         on_delete=models.CASCADE,
         related_name='areas'
     )

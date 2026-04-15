@@ -66,6 +66,10 @@
   @apply w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent;
 }
 
+.input-search {
+  padding-left: 2.5rem;
+}
+
 .table {
   @apply w-full text-left;
 }

@@ -24,7 +24,7 @@ export default function Areas() {
   const fetchAreas = async () => {
     try {
       const response = await api.get('/planes/areas/');
-      setAreas(response.data);
+      setAreas(response.data.results || response.data);
     } catch (error) {
       toast.error('Error al cargar las áreas');
     } finally {

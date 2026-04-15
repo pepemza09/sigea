@@ -1,4 +1,5 @@
 import { useState, createContext, useContext, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
 
@@ -16,6 +17,10 @@ export function AuthProvider({ children }) {
           const data = await response.json();
           setUser(data);
           localStorage.setItem('sigea_user', JSON.stringify(data));
+          
+          if (data.pending_approval) {
+            toast.error('El usuario necesita aprobación de un administrador');
+          }
         } else {
           setUser(null);
           localStorage.removeItem('sigea_user');
@@ -32,6 +37,10 @@ export function AuthProvider({ children }) {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem('sigea_user', JSON.stringify(userData));
+    
+    if (userData.pending_approval) {
+      toast.error('El usuario necesita aprobación de un administrador');
+    }
   };
 
   const logout = () => {

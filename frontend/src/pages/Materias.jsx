@@ -11,6 +11,7 @@ export default function Materias() {
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -35,8 +36,16 @@ export default function Materias() {
   });
 
   useEffect(() => {
-    loadMaterias();
     loadAreas();
+  }, []);
+
+  useEffect(() => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      loadMaterias();
+    }, 300);
+    setSearchTimeout(timeout);
+    return () => clearTimeout(timeout);
   }, [search]);
 
   const loadMaterias = async () => {

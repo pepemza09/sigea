@@ -20,20 +20,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    env_file:
+      - .env
     container_name: sigea_backend
     environment:
       PYTHONPATH: /app
-      DEBUG: "False"
-      SECRET_KEY: django-insecure-sigea2026UNCuyo-secret-key-change-in-production
-      DATABASE_NAME: sigea
-      DATABASE_USER: sigea_user
-      DATABASE_PASSWORD: sigea_pass_2026
-      DATABASE_HOST: postgres_db
-      DATABASE_PORT: 5432
     command: >
-      sh -c "python manage.py migrate &&
-             python manage.py shell -c \"from django.contrib.auth.models import User; u, _ = User.objects.get_or_create(username='admin'); u.set_password('admin123'); u.save()\" &&
-             gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120"
+      sh -c "chmod +x /app/start.sh && /app/start.sh"
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media

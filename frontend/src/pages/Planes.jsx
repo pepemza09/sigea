@@ -12,6 +12,7 @@ export default function Planes() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCarrera, setFilterCarrera] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [showCloneModal, setShowCloneModal] = useState(false);
@@ -31,7 +32,12 @@ export default function Planes() {
   });
 
   useEffect(() => {
-    loadData();
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      loadData();
+    }, 300);
+    setSearchTimeout(timeout);
+    return () => clearTimeout(timeout);
   }, [search, filterCarrera]);
 
   const loadData = async () => {
@@ -44,9 +50,6 @@ export default function Planes() {
       setCarreras(carRes.data.results || carRes.data);
       
       let data = planesRes.data.results || planesRes.data;
-      if (search) {
-        data = data.filter(p => p.nombre.toLowerCase().includes(search.toLowerCase()));
-      }
       if (filterCarrera) {
         data = data.filter(p => p.carrera === parseInt(filterCarrera));
       }
@@ -161,14 +164,14 @@ export default function Planes() {
 
       <div className="card p-4">
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <div className="flex items-center gap-2 flex-1">
-            <Search size={20} className="text-gray-400" />
+          <div className="flex items-center gap-2 flex-1 relative">
+            <Search size={20} className="text-gray-400 absolute left-3 z-10" />
             <input
               type="text"
               placeholder="Buscar por nombre..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input"
+              className="input input-search"
             />
           </div>
           <Autocomplete

@@ -10,6 +10,7 @@ export default function Carreras() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterUnidad, setFilterUnidad] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -19,7 +20,12 @@ export default function Carreras() {
   const [formData, setFormData] = useState({ codigo: '', nombre: '', unidad_academica: '', duracion_anios: 4 });
 
   useEffect(() => {
-    loadData();
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      loadData();
+    }, 300);
+    setSearchTimeout(timeout);
+    return () => clearTimeout(timeout);
   }, [search, filterUnidad]);
 
   const loadData = async () => {
@@ -32,9 +38,6 @@ export default function Carreras() {
       setUnidades(uaRes.data.results || uaRes.data);
       
       let data = carrRes.data.results || carrRes.data;
-      if (search) {
-        data = data.filter(c => c.nombre.toLowerCase().includes(search.toLowerCase()));
-      }
       if (filterUnidad) {
         data = data.filter(c => c.unidad_academica === parseInt(filterUnidad));
       }
@@ -117,14 +120,14 @@ setFormData({ codigo: '', nombre: '', unidad_academica: '', duracion_anios: 4 })
 
       <div className="card p-4">
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <div className="flex items-center gap-2 flex-1">
-            <Search size={20} className="text-gray-400" />
+          <div className="flex items-center gap-2 flex-1 relative">
+            <Search size={20} className="text-gray-400 absolute left-3 z-10" />
             <input
               type="text"
               placeholder="Buscar por nombre..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input"
+              className="input input-search"
             />
           </div>
           <select
@@ -170,10 +173,10 @@ setFormData({ codigo: '', nombre: '', unidad_academica: '', duracion_anios: 4 })
                     </td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <button onClick={() => handleEdit(carrera)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <button onClick={() => handleEdit(carrera)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg" title="Editar">
                           <Edit size={18} className="text-gray-500" />
                         </button>
-                        <button onClick={() => handleDelete(carrera.id)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <button onClick={() => handleDelete(carrera.id)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg" title="Eliminar">
                           <Trash2 size={18} className="text-danger-500" />
                         </button>
                       </div>

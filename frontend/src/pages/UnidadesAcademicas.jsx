@@ -8,6 +8,7 @@ export default function UnidadesAcademicas() {
   const [unidades, setUnidades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({ nombre: '', sigla: '', descripcion: '' });
@@ -17,19 +18,18 @@ export default function UnidadesAcademicas() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    loadUnidades();
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => {
+      loadUnidades();
+    }, 300);
+    setSearchTimeout(timeout);
+    return () => clearTimeout(timeout);
   }, [search]);
 
   const loadUnidades = async () => {
     try {
       const res = await unidadesAcademicasService.getAll();
       let data = res.data.results || res.data;
-      if (search) {
-        data = data.filter(u => 
-          u.nombre.toLowerCase().includes(search.toLowerCase()) ||
-          u.sigla.toLowerCase().includes(search.toLowerCase())
-        );
-      }
       setUnidades(data);
     } catch (error) {
       toast.error('Error al cargar unidades académicas');
