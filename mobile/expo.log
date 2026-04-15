@@ -1,0 +1,7 @@
+Starting project at /home/victor_costa_fce/sigea/mobile
+Starting Metro Bundler
+The following packages should be updated for best compatibility with the installed expo version:
+  react-native-safe-area-context@4.9.0 - expected version: 4.8.2
+Your project may not work correctly until you install the correct versions of the packages.
+Waiting on http://localhost:8081
+Logs for your project will appear below.

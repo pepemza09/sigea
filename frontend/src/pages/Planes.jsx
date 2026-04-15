@@ -53,6 +53,17 @@ export default function Planes() {
       if (filterCarrera) {
         data = data.filter(p => p.carrera === parseInt(filterCarrera));
       }
+      const searchLower = search.toLowerCase().trim();
+      if (searchLower) {
+        data = data.filter(p => 
+          p.nombre?.toLowerCase().includes(searchLower) ||
+          p.carrera_nombre?.toLowerCase().includes(searchLower) ||
+          p.anio_aprobacion?.toString().includes(search) ||
+          p.duracion_anios?.toString().includes(search) ||
+          p.carga_horaria_total?.toString().includes(search) ||
+          p.creditos_totales?.toString().includes(search)
+        );
+      }
       setPlanes(data);
     } catch (error) {
       toast.error('Error al cargar planes');
@@ -163,25 +174,17 @@ export default function Planes() {
       </div>
 
       <div className="card p-4">
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <div className="flex items-center gap-2 flex-1 relative">
+        <div className="mb-4">
+          <div className="flex items-center gap-2 relative">
             <Search size={20} className="text-gray-400 absolute left-3 z-10" />
             <input
               type="text"
-              placeholder="Buscar por nombre..."
+              placeholder="Buscar por nombre, carrera, año..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="input input-search"
             />
           </div>
-          <Autocomplete
-            value={filterCarrera}
-            onChange={(value) => setFilterCarrera(value || '')}
-            options={carreras}
-            optionLabel={(c) => `${c.unidad_academica_sigla} - ${c.nombre}`}
-            optionValue="id"
-            placeholder="Todas las carreras"
-          />
         </div>
 
         <div className="overflow-x-auto">
