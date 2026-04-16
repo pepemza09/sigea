@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'apps.planes',
     'apps.materias',
     'apps.equivalencias',
+    'apps.periodos',
+    'apps.configuracion',
 ]
 
 MIDDLEWARE = [

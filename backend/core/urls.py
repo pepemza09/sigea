@@ -93,6 +93,8 @@ urlpatterns = [
     path('api/planes/', include('apps.planes.urls')),
     path('api/materias/', include('apps.materias.urls')),
     path('api/equivalencias/', include('apps.equivalencias.urls')),
+    path('api/periodos/', include('apps.periodos.urls')),
+    path('api/', include('apps.configuracion.urls')),
     path('api/auth/login/', LoginView.as_view(), name='login'),
     path('api/auth/logout/', LogoutView.as_view(), name='logout'),
     path('api/auth/me/', CurrentUserView.as_view(), name='current-user'),

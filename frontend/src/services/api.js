@@ -92,4 +92,59 @@ export const equivalenciasService = {
   eliminarDetalle: (id, detalleId) => api.delete(`equivalencias/${id}/eliminar_detalle/${detalleId}/`),
 };
 
+export const periodosService = {
+  getAll: () => api.get('periodos/'),
+  getById: (id) => api.get(`periodos/${id}/`),
+  create: (data) => api.post('periodos/', data),
+  update: (id, data) => api.put(`periodos/${id}/`, data),
+  delete: (id) => api.delete(`periodos/${id}/`),
+};
+
+export const usuariosService = {
+  getAll: () => api.get('configuracion/usuarios/'),
+  getById: (id) => api.get(`configuracion/usuarios/${id}/`),
+  create: (data) => api.post('configuracion/usuarios/', data),
+  update: (id, data) => api.put(`configuracion/usuarios/${id}/`, data),
+  delete: (id) => api.delete(`configuracion/usuarios/${id}/`),
+  toggleActive: (id) => api.post(`configuracion/usuarios/${id}/toggle_active/`),
+  resetPassword: (id, password) => api.post(`configuracion/usuarios/${id}/reset_password/`, { password }),
+  stats: () => api.get('configuracion/usuarios/stats/'),
+};
+
+export const gruposService = {
+  getAll: () => api.get('configuracion/grupos/'),
+  getById: (id) => api.get(`configuracion/grupos/${id}/`),
+  create: (data) => api.post('configuracion/grupos/', data),
+  update: (id, data) => api.put(`configuracion/grupos/${id}/`, data),
+  delete: (id) => api.delete(`configuracion/grupos/${id}/`),
+  setPermissions: (id, permissions) => api.post(`configuracion/grupos/${id}/set_permissions/`, { permissions }),
+};
+
+export const permisosService = {
+  getAll: () => api.get('configuracion/permisos/'),
+  byContentType: () => api.get('configuracion/permisos/by_content_type/'),
+};
+
+export const configuracionService = {
+  getSettings: () => api.get('configuracion/settings/'),
+  getSetting: (clave) => api.get(`configuracion/settings/${clave}/`),
+  createSetting: (data) => api.post('configuracion/settings/', data),
+  updateSetting: (clave, data) => api.put(`configuracion/settings/${clave}/`, data),
+  deleteSetting: (clave) => api.delete(`configuracion/settings/${clave}/`),
+  getAppInfo: () => api.get('configuracion/app-info/'),
+};
+
+export const backupService = {
+  export: (tipo = 'completo', formato = 'json') => 
+    api.get(`configuracion/backup/?tipo=${tipo}&formato=${formato}`, { responseType: 'blob' }),
+  import: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('action', 'import');
+    return api.post('configuracion/backup/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
 export default api;

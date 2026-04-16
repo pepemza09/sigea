@@ -14,6 +14,11 @@ import Areas from './pages/Areas';
 import Materias from './pages/Materias';
 import Equivalencias from './pages/Equivalencias';
 import Configuraciones from './pages/Configuraciones';
+import Usuarios from './pages/Usuarios';
+import Periodos from './pages/Periodos';
+import Roles from './pages/Roles';
+import Backup from './pages/Backup';
+import ConfiguracionGeneral from './pages/ConfiguracionGeneral';
 import Login from './pages/Login';
 
 function ProtectedRoute({ children }) {
@@ -62,6 +67,11 @@ function AppLayout() {
             <Route path="/materias" element={<Materias />} />
             <Route path="/equivalencias" element={<Equivalencias />} />
             <Route path="/configuraciones" element={<Configuraciones />} />
+            <Route path="/configuraciones/usuarios" element={<Usuarios />} />
+            <Route path="/configuraciones/periodos" element={<Periodos />} />
+            <Route path="/configuraciones/roles" element={<Roles />} />
+            <Route path="/configuraciones/backup" element={<Backup />} />
+            <Route path="/configuraciones/general" element={<ConfiguracionGeneral />} />
           </Routes>
         </main>
       </div>

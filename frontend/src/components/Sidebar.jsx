@@ -20,6 +20,7 @@ const menuItems = [
   { path: '/areas', icon: Layers, label: 'Áreas' },
   { path: '/materias', icon: FileText, label: 'Materias' },
   { path: '/equivalencias', icon: ArrowLeftRight, label: 'Equivalencias' },
+  { path: '/configuraciones', icon: Settings, label: 'Configuración' },
 ];
 
 export default function Sidebar({ isOpen, setIsOpen, isCollapsed }) {
